@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="L3Game" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="bin/Release/L3Game" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="SDL" />
+					<Add library="./libchipmunk.a" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="chipmunk/chipmunk.h" />
+		<Unit filename="chipmunk/chipmunk_ffi.h" />
+		<Unit filename="chipmunk/chipmunk_private.h" />
+		<Unit filename="chipmunk/chipmunk_types.h" />
+		<Unit filename="chipmunk/chipmunk_unsafe.h" />
+		<Unit filename="chipmunk/constraints/cpConstraint.h" />
+		<Unit filename="chipmunk/constraints/cpDampedRotarySpring.h" />
+		<Unit filename="chipmunk/constraints/cpDampedSpring.h" />
+		<Unit filename="chipmunk/constraints/cpGearJoint.h" />
+		<Unit filename="chipmunk/constraints/cpGrooveJoint.h" />
+		<Unit filename="chipmunk/constraints/cpPinJoint.h" />
+		<Unit filename="chipmunk/constraints/cpPivotJoint.h" />
+		<Unit filename="chipmunk/constraints/cpRatchetJoint.h" />
+		<Unit filename="chipmunk/constraints/cpRotaryLimitJoint.h" />
+		<Unit filename="chipmunk/constraints/cpSimpleMotor.h" />
+		<Unit filename="chipmunk/constraints/cpSlideJoint.h" />
+		<Unit filename="chipmunk/constraints/util.h" />
+		<Unit filename="chipmunk/cpArbiter.h" />
+		<Unit filename="chipmunk/cpBB.h" />
+		<Unit filename="chipmunk/cpBody.h" />
+		<Unit filename="chipmunk/cpPolyShape.h" />
+		<Unit filename="chipmunk/cpShape.h" />
+		<Unit filename="chipmunk/cpSpace.h" />
+		<Unit filename="chipmunk/cpSpatialIndex.h" />
+		<Unit filename="chipmunk/cpVect.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
