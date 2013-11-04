@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_gfxPrimitives.h>
 #include "chipmunk/chipmunk.h"
 
 int main(void)
@@ -14,7 +15,8 @@ int main(void)
         printf("It works fine!!!");
     }
 
-    SDL_SetVideoMode(640, 480, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    SDL_Surface* surface = SDL_SetVideoMode(640, 480, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    circleColor(surface, 100,100,1,0x55555599);
     //SDL_Flip(screen);
     // cpVect is a 2D vector and cpv() is a shortcut for initializing them.
     cpVect gravity = cpv(0, -100);
