@@ -4,34 +4,33 @@
 #include "chipmunk/chipmunk.h"
 
 void pause();
+cpSpace* getSpace(void);
+void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 
 int main(void)
 {
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    SDL_Init( SDL_INIT_VIDEO );
+
+    SDL_Surface* surface = SDL_SetVideoMode(640, 480, 16, SDL_HWSURFACE |
+                                            SDL_DOUBLEBUF);
+    if(surface == NULL)
     {
-        printf( "Unable to init SDL: %s\n", SDL_GetError() );
-        return 1;
-    }
-    else
-    {
-        printf("OK");
+        fprintf(stderr, "Failed to load the video mode");
+        exit(EXIT_FAILURE);
     }
 
-    SDL_Surface* surface = SDL_SetVideoMode(640, 480, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+    cpSpace* space = getSpace();
 
-    // cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-    cpVect gravity = cpv(0, 10);
-
-    // Create an empty space.
-    cpSpace *space = cpSpaceNew();
-    cpSpaceSetGravity(space, gravity);
-
-    // Add a static line segment shape for the ground.
-    // We'll make it slightly tilted so the ball will roll off.
-    // We attach it to space->staticBody to tell Chipmunk it shouldn't be movable.
-    cpShape *ground = cpSegmentShapeNew(space->staticBody, cpv(100, 150), cpv(220, 180), 0);
-    cpShapeSetFriction(ground, 1);
-    cpSpaceAddShape(space, ground);
+    cpShape* container[3];
+    container[0] = cpSegmentShapeNew(space->staticBody, cpv(100, 150),
+                                     cpv(200, 300), 0);
+    container[1] = cpSegmentShapeNew(space->staticBody, cpv(200, 300),
+                                     cpv(400, 300), 0);
+    container[2] = cpSegmentShapeNew(space->staticBody, cpv(400, 300),
+                                     cpv(500, 150), 0);
+    cpSpaceAddShape(space, container[0]);
+    cpSpaceAddShape(space, container[1]);
+    cpSpaceAddShape(space, container[2]);
 
     // Now let's make a ball that falls onto the line and rolls off.
     // First we need to make a cpBody to hold the physical properties of the object.
@@ -53,39 +52,61 @@ int main(void)
     // Now we create the collision shape for the ball.
     // You can create multiple collision shapes that point to the same body.
     // They will all be attached to the body and move around to follow it.
-    cpShape *ballShape = cpSpaceAddShape(space, cpCircleShapeNew(ballBody, radius, cpvzero));
+    cpShape *ballShape = cpSpaceAddShape(space, cpCircleShapeNew(ballBody,
+                                         radius, cpvzero));
     cpShapeSetFriction(ballShape, 0.7);
 
     // Now that it's all set up, we simulate all the objects in the space by
     // stepping forward through time in small increments called steps.
     // It is *highly* recommended to use a fixed size time step.
-    cpFloat timeStep = 1.0 / 60.0;
+    cpFloat timeStep = 1.0 / 40.0;
     cpFloat time;
-    for(time = 0; time < 10; time += timeStep)
+    for(time = 0; time < 22; time += timeStep)
     {
         cpVect pos = cpBodyGetPos(ballBody);
         cpVect vel = cpBodyGetVel(ballBody);
         printf(
-            "Time is %5.2f. ballBody is at (%5.2f, %5.2f). It's velocity is (%5.2f, %5.2f)\n",
+            "Time is %5.2f. ballBody is at (%5.2f, %5.2f). It's velocity is \
+            (%5.2f, %5.2f)\n",
             time, pos.x, pos.y, vel.x, vel.y
         );
 
         cpSpaceStep(space, timeStep);
         SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 170, 206, 152));
-        thickLineColor(surface, 100,150,220,180,2,SDL_MapRGB(surface->format, 17, 206, 112));
-        filledCircleColor(surface, pos.x, pos.y,10,SDL_MapRGB(surface->format, 17, 206, 112));
+        renderContainer(surface, container, 3);
+        filledCircleColor(surface, pos.x, pos.y, 10, SDL_MapRGB(surface->format,
+                          17, 206, 112));
         SDL_Flip(surface);
     }
-
-    //pause();
+    printf("%f", cpSegmentShapeGetA(container[0]).x);
+    pause();
 
     // Clean up our objects and exit!
     cpShapeFree(ballShape);
     cpBodyFree(ballBody);
-    cpShapeFree(ground);
     cpSpaceFree(space);
 
     return 0;
+}
+
+cpSpace* getSpace(void)
+{
+    cpSpace *space = cpSpaceNew();
+    cpVect gravity = cpv(0, 10);
+    cpSpaceSetGravity(space, gravity);
+    return space;
+}
+
+void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape)
+{
+    int i;
+    for(i = 0; i < nbShape; i++)
+    {
+        cpVect a = cpSegmentShapeGetA(container[i]);
+        cpVect b = cpSegmentShapeGetB(container[i]);
+        thickLineColor(surface, a.x, a.y, b.x, b.y, 2,
+                       SDL_MapRGB(surface->format, 17, 206, 112));
+    }
 }
 
 void pause()
@@ -98,8 +119,8 @@ void pause()
         SDL_WaitEvent(&event);
         switch(event.type)
         {
-            case SDL_QUIT:
-                continuer = 0;
+        case SDL_QUIT:
+            continuer = 0;
         }
     }
 }
