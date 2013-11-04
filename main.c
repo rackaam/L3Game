@@ -3,6 +3,8 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include "chipmunk/chipmunk.h"
 
+void pause();
+
 int main(void)
 {
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -12,14 +14,13 @@ int main(void)
     }
     else
     {
-        printf("It works fine!!!");
+        printf("OK");
     }
 
     SDL_Surface* surface = SDL_SetVideoMode(640, 480, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    circleColor(surface, 100,100,1,0x55555599);
-    //SDL_Flip(screen);
+
     // cpVect is a 2D vector and cpv() is a shortcut for initializing them.
-    cpVect gravity = cpv(0, -100);
+    cpVect gravity = cpv(0, 10);
 
     // Create an empty space.
     cpSpace *space = cpSpaceNew();
@@ -28,7 +29,7 @@ int main(void)
     // Add a static line segment shape for the ground.
     // We'll make it slightly tilted so the ball will roll off.
     // We attach it to space->staticBody to tell Chipmunk it shouldn't be movable.
-    cpShape *ground = cpSegmentShapeNew(space->staticBody, cpv(-20, 5), cpv(20, -5), 0);
+    cpShape *ground = cpSegmentShapeNew(space->staticBody, cpv(100, 150), cpv(220, 180), 0);
     cpShapeSetFriction(ground, 1);
     cpSpaceAddShape(space, ground);
 
@@ -37,8 +38,8 @@ int main(void)
     // These include the mass, position, velocity, angle, etc. of the object.
     // Then we attach collision shapes to the cpBody to give it a size and shape.
 
-    cpFloat radius = 5;
-    cpFloat mass = 1;
+    cpFloat radius = 10;
+    cpFloat mass = 5;
 
     // The moment of inertia is like mass for rotation
     // Use the cpMomentFor*() functions to help you approximate it.
@@ -47,7 +48,7 @@ int main(void)
     // The cpSpaceAdd*() functions return the thing that you are adding.
     // It's convenient to create and add an object in one line.
     cpBody *ballBody = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-    cpBodySetPos(ballBody, cpv(0, 15));
+    cpBodySetPos(ballBody, cpv(150, 50));
 
     // Now we create the collision shape for the ball.
     // You can create multiple collision shapes that point to the same body.
@@ -60,7 +61,7 @@ int main(void)
     // It is *highly* recommended to use a fixed size time step.
     cpFloat timeStep = 1.0 / 60.0;
     cpFloat time;
-    for(time = 0; time < 2; time += timeStep)
+    for(time = 0; time < 10; time += timeStep)
     {
         cpVect pos = cpBodyGetPos(ballBody);
         cpVect vel = cpBodyGetVel(ballBody);
@@ -70,7 +71,13 @@ int main(void)
         );
 
         cpSpaceStep(space, timeStep);
+        SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 170, 206, 152));
+        thickLineColor(surface, 100,150,220,180,2,SDL_MapRGB(surface->format, 17, 206, 112));
+        filledCircleColor(surface, pos.x, pos.y,10,SDL_MapRGB(surface->format, 17, 206, 112));
+        SDL_Flip(surface);
     }
+
+    //pause();
 
     // Clean up our objects and exit!
     cpShapeFree(ballShape);
@@ -79,5 +86,21 @@ int main(void)
     cpSpaceFree(space);
 
     return 0;
+}
+
+void pause()
+{
+    int continuer = 1;
+    SDL_Event event;
+
+    while (continuer)
+    {
+        SDL_WaitEvent(&event);
+        switch(event.type)
+        {
+            case SDL_QUIT:
+                continuer = 0;
+        }
+    }
 }
 
