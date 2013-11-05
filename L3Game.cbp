@@ -50,6 +50,10 @@
 		<Unit filename="chipmunk/cpSpace.h" />
 		<Unit filename="chipmunk/cpSpatialIndex.h" />
 		<Unit filename="chipmunk/cpVect.h" />
+		<Unit filename="circle.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="circle.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

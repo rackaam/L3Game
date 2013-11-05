@@ -18,6 +18,8 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
+    srand(time(NULL));
+
     cpSpace* space = getSpace();
 
     cpShape* container[3];
@@ -31,8 +33,13 @@ int main(void)
     cpSpaceAddShape(space, container[1]);
     cpSpaceAddShape(space, container[2]);
 
-    Circle circle;
-    initCircle(&circle, space, surface);
+    Circle circles[4];
+    int i;
+    for(i = 0; i < 4; i++)
+    {
+        initCircle(&(circles[i]), space, surface);
+    }
+
     // Now that it's all set up, we simulate all the objects in the space by
     // stepping forward through time in small increments called steps.
     // It is *highly* recommended to use a fixed size time step.
@@ -40,24 +47,24 @@ int main(void)
     cpFloat time;
     for(time = 0; time < 22; time += timeStep)
     {
-        cpVect pos = cpBodyGetPos(circle.body);
-        cpVect vel = cpBodyGetVel(circle.body);
-        printf(
-            "Time is %5.2f. ballBody is at (%5.2f, %5.2f). It's velocity is \
-            (%5.2f, %5.2f)\n",
-            time, pos.x, pos.y, vel.x, vel.y
-        );
         cpSpaceStep(space, timeStep);
         SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 170, 206, 152));
         renderContainer(surface, container, 3);
-        filledCircleColor(surface, pos.x, pos.y, 22, circle.color);
+        for(i = 0; i < 4; i++)
+        {
+            cpVect pos = cpBodyGetPos(circles[i].body);
+            filledCircleColor(surface, pos.x, pos.y, 22, circles[i].color);
+        }
         SDL_Flip(surface);
     }
     printf("%f", cpSegmentShapeGetA(container[0]).x);
     pause();
 
     // Clean up our objects and exit!
-    freeCircle(&circle);
+    for(i = 0; i < 4; i++)
+    {
+        freeCircle(&(circles[i]));
+    }
     cpSpaceFree(space);
 
     return 0;

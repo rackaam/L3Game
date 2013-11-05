@@ -9,10 +9,8 @@ void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
 
     cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
 
-    // The cpSpaceAdd*() functions return the thing that you are adding.
-    // It's convenient to create and add an object in one line.
     circle->body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-    cpBodySetPos(circle->body, cpv(150, 50));
+    cpBodySetPos(circle->body, cpv(rand() % 500, 50));
     circle->shape = cpSpaceAddShape(space, cpCircleShapeNew(circle->body,
                                     radius, cpvzero));
     cpShapeSetFriction(circle->shape, 0);
