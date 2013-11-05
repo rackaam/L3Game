@@ -24,10 +24,16 @@ int main(void)
     cpShape* container[3];
     container[0] = cpSegmentShapeNew(space->staticBody, cpv(100, 150),
                                      cpv(200, 300), 0);
+    cpShapeSetFriction(container[0], 0.5);
+    cpShapeSetElasticity(container[0], 0.5);
     container[1] = cpSegmentShapeNew(space->staticBody, cpv(200, 300),
                                      cpv(400, 300), 0);
+    cpShapeSetFriction(container[1], 0.5);
+    cpShapeSetElasticity(container[1], 0.5);
     container[2] = cpSegmentShapeNew(space->staticBody, cpv(400, 300),
                                      cpv(500, 150), 0);
+    cpShapeSetFriction(container[2], 0.5);
+    cpShapeSetElasticity(container[2], 0.5);
     cpSpaceAddShape(space, container[0]);
     cpSpaceAddShape(space, container[1]);
     cpSpaceAddShape(space, container[2]);

@@ -1,8 +1,10 @@
 #ifndef CIRCLE_H_INCLUDED
 #define CIRCLE_H_INCLUDED
 
-#include <SDL/SDL.h>
+#define TO_DEGREES 57.295779513
+
 #include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_rotozoom.h>
 #include <time.h>
 #include "chipmunk/chipmunk.h"
 
