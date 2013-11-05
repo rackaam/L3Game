@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <SDL/SDL_gfxPrimitives.h>
 #include "circle.h"
 
 void pause();
@@ -52,9 +51,8 @@ int main(void)
         renderContainer(surface, container, 3);
         for(i = 0; i < 4; i++)
         {
-            cpVect pos = cpBodyGetPos(circles[i].body);
-            filledCircleColor(surface, pos.x, pos.y, 22, circles[i].color);
-        }
+            renderCircle(surface, &(circles[i]));
+;        }
         SDL_Flip(surface);
     }
     printf("%f", cpSegmentShapeGetA(container[0]).x);
