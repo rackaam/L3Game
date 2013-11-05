@@ -2,10 +2,14 @@
 
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
 {
-    circle->c = 'b';
-    circle->color = SDL_MapRGB(surface->format, 170, 206, 112);
+    circle->c = rand() % 27 + 97;
+
     cpFloat radius = 22;
     cpFloat mass = 5;
+    circle->surface = SDL_CreateRGBSurface(SDL_HWSURFACE, radius * 2, radius * 2
+                                           , 32, 0xFF000000, 0x00FF0000,
+                                           0x0000FF00, 0x000000FF);
+    circle->color = SDL_MapRGB(circle->surface->format, 0, 0, 255);
 
     cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
 
@@ -24,6 +28,13 @@ void freeCircle(Circle* circle)
 
 void renderCircle(SDL_Surface* surface, Circle* circle)
 {
+    cpFloat radius = cpCircleShapeGetRadius(circle->shape);
+    SDL_Rect rect;
     cpVect pos = cpBodyGetPos(circle->body);
-    filledCircleColor(surface, pos.x, pos.y, 22, circle->color);
+    rect.x = pos.x - radius;
+    rect.y = pos.y - radius;
+    filledCircleColor(circle->surface, radius, radius, radius, circle->color);
+    characterColor(circle->surface, 18, 18, circle->c,
+                   SDL_MapRGB(circle->surface->format, 250, 0, 0));
+    SDL_BlitSurface(circle->surface, NULL, surface, &rect);
 }

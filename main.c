@@ -9,7 +9,7 @@ int main(void)
 {
     SDL_Init( SDL_INIT_VIDEO );
 
-    SDL_Surface* surface = SDL_SetVideoMode(640, 480, 16, SDL_HWSURFACE |
+    SDL_Surface* surface = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE |
                                             SDL_DOUBLEBUF);
     if(surface == NULL)
     {
@@ -39,23 +39,19 @@ int main(void)
         initCircle(&(circles[i]), space, surface);
     }
 
-    // Now that it's all set up, we simulate all the objects in the space by
-    // stepping forward through time in small increments called steps.
-    // It is *highly* recommended to use a fixed size time step.
     cpFloat timeStep = 1.0 / 40.0;
     cpFloat time;
     for(time = 0; time < 22; time += timeStep)
     {
         cpSpaceStep(space, timeStep);
-        SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 170, 206, 152));
+        SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 255, 255, 255));
         renderContainer(surface, container, 3);
         for(i = 0; i < 4; i++)
         {
             renderCircle(surface, &(circles[i]));
-;        }
+        }
         SDL_Flip(surface);
     }
-    printf("%f", cpSegmentShapeGetA(container[0]).x);
     pause();
 
     // Clean up our objects and exit!
@@ -83,8 +79,7 @@ void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape)
     {
         cpVect a = cpSegmentShapeGetA(container[i]);
         cpVect b = cpSegmentShapeGetB(container[i]);
-        thickLineColor(surface, a.x, a.y, b.x, b.y, 2,
-                       SDL_MapRGB(surface->format, 17, 206, 112));
+        thickLineColor(surface, a.x, a.y, b.x, b.y, 2, 0x000099FF);
     }
 }
 

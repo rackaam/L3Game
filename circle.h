@@ -13,6 +13,7 @@ struct Circle
     int color;
     cpBody* body;
     cpShape* shape;
+    SDL_Surface* surface;
 };
 
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface);
