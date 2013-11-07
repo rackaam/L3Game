@@ -25,6 +25,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="`pkg-config --cflags --libs glib-2.0`" />
 		</Compiler>
 		<Unit filename="chipmunk/chipmunk.h" />
 		<Unit filename="chipmunk/chipmunk_ffi.h" />

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <glib.h>
 #include "circle.h"
 
 void pause();
