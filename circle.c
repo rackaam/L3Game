@@ -19,12 +19,16 @@ void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
                                     radius, cpvzero));
     cpShapeSetFriction(circle->shape, 0.8);
     cpShapeSetElasticity(circle->shape, 0.9);
+    circle->shape->collision_type = 0;
+    circle->affected = 0;
+    circlesNumber++;
 }
 
 void freeCircle(Circle* circle)
 {
     cpShapeFree(circle->shape);
     cpBodyFree(circle->body);
+    circlesNumber--;
 }
 
 void renderCircle(SDL_Surface* surface, Circle* circle)
@@ -32,7 +36,15 @@ void renderCircle(SDL_Surface* surface, Circle* circle)
     cpFloat radius = cpCircleShapeGetRadius(circle->shape);
     SDL_Rect rect;
     cpVect pos = cpBodyGetPos(circle->body);
-    filledCircleColor(circle->surface, radius, radius, radius, circle->color);
+    if(circle->affected)
+    {
+        filledCircleColor(circle->surface, radius, radius, radius,
+                          SDL_MapRGB(circle->surface->format, 0, 200, 255));
+    }
+    else
+    {
+        filledCircleColor(circle->surface, radius, radius, radius, circle->color);
+    }
     characterColor(circle->surface, 18, 18, circle->c,
                    SDL_MapRGB(circle->surface->format, 250, 0, 0));
     cpFloat angle = -cpBodyGetAngle(circle->body);

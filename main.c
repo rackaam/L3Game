@@ -6,10 +6,29 @@ void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 
+int circlesNumber = 0;
+
+cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
+{
+    cpShape *a, *b;
+    cpArbiterGetShapes(arb, &a, &b);
+    int i;
+    Circle* circles = (Circle*)data;
+    for(i = 0; i < circlesNumber; i++)
+    {
+        if(circles[i].shape == a)
+        {
+            circles[i].affected = 1;
+        }
+    }
+
+    return cpFalse;
+}
+
 int main(void)
 {
-    cpVect mouseVect = cpv(-1, -1);
-    cpVect mouseVect2;
+    cpVect mouse1 = cpv(-1, -1);
+    cpVect mouse2 = cpv(-1, -1);
     int drawLine = 0;
     SDL_Init( SDL_INIT_VIDEO );
 
@@ -42,7 +61,7 @@ int main(void)
     cpSpaceAddShape(space, container[1]);
     cpSpaceAddShape(space, container[2]);
 
-    Circle circles[4];
+    Circle circles[10];
     int i;
     for(i = 0; i < 4; i++)
     {
@@ -52,10 +71,15 @@ int main(void)
     cpFloat timeStep = 1.0 / 8.0;
     int run = 1;
     SDL_Event event;
+    cpSpaceAddCollisionHandler(space, 0, 1, NULL, preSolve, NULL, NULL, circles);
+
     while (run)
     {
-        cpSpaceStep(space, timeStep);
         SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 255, 255, 255));
+        for(i = 0; i < circlesNumber; i++)
+        {
+            circles[i].affected = 0;
+        }
 
         while(SDL_PollEvent(&event))
         {
@@ -65,16 +89,15 @@ int main(void)
                 run = 0;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                mouseVect.x = event.button.x;
-                mouseVect.y = event.button.y;
-                printf("%f/%f\n", mouseVect.x, mouseVect.y);
+                mouse1.x = event.button.x;
+                mouse1.y = event.button.y;
                 break;
             case SDL_MOUSEMOTION:
                 if(((SDL_MouseMotionEvent*)&event)->state & SDL_BUTTON(1))
                 {
                     drawLine = 1;
-                    mouseVect2.x = event.button.x;
-                    mouseVect2.y = event.button.y;
+                    mouse2.x = event.button.x;
+                    mouse2.y = event.button.y;
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
@@ -87,21 +110,32 @@ int main(void)
             }
         }
 
+        cpShape* mouseSeg = cpSegmentShapeNew(space->staticBody,
+                                              cpv(mouse1.x, mouse1.y),
+                                              cpv(mouse2.x, mouse2.y), 0);
+        if(drawLine)
+        {
+            mouseSeg->collision_type = 1;
+            cpSpaceAddShape(space, mouseSeg);
+        }
+        cpSpaceStep(space, timeStep);
         renderContainer(surface, container, 3);
-        for(i = 0; i < 4; i++)
+        for(i = 0; i < circlesNumber; i++)
         {
             renderCircle(surface, &(circles[i]));
         }
         if(drawLine)
         {
-            lineColor(surface, mouseVect.x, mouseVect.y,
-                      mouseVect2.x, mouseVect2.y, 0x000000FF);
+            lineColor(surface, mouse1.x, mouse1.y,
+                      mouse2.x, mouse2.y, 0x000000FF);
+            cpSpaceRemoveShape(space, mouseSeg);
         }
+        cpShapeFree(mouseSeg);
         SDL_Flip(surface);
         SDL_Delay(1000.0 / 60.0);
     }
 
-    for(i = 0; i < 4; i++)
+    while(circlesNumber)
     {
         freeCircle(&(circles[i]));
     }

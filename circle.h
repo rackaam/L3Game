@@ -8,11 +8,14 @@
 #include <time.h>
 #include "chipmunk/chipmunk.h"
 
+extern int circlesNumber;
+
 typedef struct Circle Circle;
 struct Circle
 {
     char c;
     int color;
+    int affected;
     cpBody* body;
     cpShape* shape;
     SDL_Surface* surface;
