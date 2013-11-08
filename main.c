@@ -8,6 +8,9 @@ void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 
 int main(void)
 {
+    cpVect mouseVect = cpv(-1, -1);
+    cpVect mouseVect2;
+    int drawLine = 0;
     SDL_Init( SDL_INIT_VIDEO );
 
     SDL_Surface* surface = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE |
@@ -46,22 +49,58 @@ int main(void)
         initCircle(&(circles[i]), space, surface);
     }
 
-    cpFloat timeStep = 1.0 / 40.0;
-    cpFloat time;
-    for(time = 0; time < 22; time += timeStep)
+    cpFloat timeStep = 1.0 / 8.0;
+    int run = 1;
+    SDL_Event event;
+    while (run)
     {
         cpSpaceStep(space, timeStep);
         SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 255, 255, 255));
+
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+            case SDL_QUIT:
+                run = 0;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                mouseVect.x = event.button.x;
+                mouseVect.y = event.button.y;
+                printf("%f/%f\n", mouseVect.x, mouseVect.y);
+                break;
+            case SDL_MOUSEMOTION:
+                if(((SDL_MouseMotionEvent*)&event)->state & SDL_BUTTON(1))
+                {
+                    drawLine = 1;
+                    mouseVect2.x = event.button.x;
+                    mouseVect2.y = event.button.y;
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                drawLine = 0;
+                break;
+            }
+            if(event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                run = 0;
+            }
+        }
+
         renderContainer(surface, container, 3);
         for(i = 0; i < 4; i++)
         {
             renderCircle(surface, &(circles[i]));
         }
+        if(drawLine)
+        {
+            lineColor(surface, mouseVect.x, mouseVect.y,
+                      mouseVect2.x, mouseVect2.y, 0x000000FF);
+        }
         SDL_Flip(surface);
+        SDL_Delay(1000.0 / 60.0);
     }
-    pause();
 
-    // Clean up our objects and exit!
     for(i = 0; i < 4; i++)
     {
         freeCircle(&(circles[i]));
@@ -92,16 +131,16 @@ void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape)
 
 void pause()
 {
-    int continuer = 1;
+    int run = 1;
     SDL_Event event;
 
-    while (continuer)
+    while (run)
     {
         SDL_WaitEvent(&event);
         switch(event.type)
         {
         case SDL_QUIT:
-            continuer = 0;
+            run = 0;
         }
     }
 }

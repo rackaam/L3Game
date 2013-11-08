@@ -42,7 +42,6 @@ void renderCircle(SDL_Surface* surface, Circle* circle)
     int yOffset = (rotatedSurface->h - circle->surface->h) / 2;
     rect.x = pos.x - radius - xOffset;
     rect.y = pos.y - radius - yOffset;
-    printf("%f\n", angle);
     SDL_BlitSurface(rotatedSurface, NULL, surface, &rect);
     SDL_FreeSurface(rotatedSurface);
 }
