@@ -5,25 +5,10 @@
 void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
+cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
+void selection(Circle* circles);
 
 int circlesNumber = 0;
-
-cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
-{
-    cpShape *a, *b;
-    cpArbiterGetShapes(arb, &a, &b);
-    int i;
-    Circle* circles = (Circle*)data;
-    for(i = 0; i < circlesNumber; i++)
-    {
-        if(circles[i].shape == a)
-        {
-            circles[i].affected = 1;
-        }
-    }
-
-    return cpFalse;
-}
 
 int main(void)
 {
@@ -76,10 +61,6 @@ int main(void)
     while (run)
     {
         SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 255, 255, 255));
-        for(i = 0; i < circlesNumber; i++)
-        {
-            circles[i].affected = 0;
-        }
 
         while(SDL_PollEvent(&event))
         {
@@ -102,6 +83,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
+                selection(circles);
                 break;
             }
             if(event.key.keysym.sym == SDLK_ESCAPE)
@@ -110,6 +92,10 @@ int main(void)
             }
         }
 
+        for(i = 0; i < circlesNumber; i++)
+        {
+            circles[i].affected = 0;
+        }
         cpShape* mouseSeg = cpSegmentShapeNew(space->staticBody,
                                               cpv(mouse1.x, mouse1.y),
                                               cpv(mouse2.x, mouse2.y), 0);
@@ -160,6 +146,42 @@ void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape)
         cpVect a = cpSegmentShapeGetA(container[i]);
         cpVect b = cpSegmentShapeGetB(container[i]);
         thickLineColor(surface, a.x, a.y, b.x, b.y, 2, 0x000099FF);
+    }
+}
+
+cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
+{
+    cpShape *a, *b;
+    cpArbiterGetShapes(arb, &a, &b);
+    int i;
+    Circle* circles = (Circle*)data;
+    for(i = 0; i < circlesNumber; i++)
+    {
+        if(circles[i].shape == a)
+        {
+            circles[i].affected = 1;
+        }
+    }
+
+    return cpFalse; // Aucune collision avec ce segment
+}
+
+void selection(Circle* circles)
+{
+    int i;
+    char str[20];
+    int charNB = 0;
+    for(i = 0; i < circlesNumber; i++)
+    {
+        if(circles[i].affected)
+        {
+            str[charNB++] = circles[i].c;
+        }
+    }
+    if(charNB)
+    {
+        // Call to function Rules1 !!!
+        printf("Selected letters : %s\n", str);
     }
 }
 

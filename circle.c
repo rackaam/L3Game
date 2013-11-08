@@ -2,7 +2,7 @@
 
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
 {
-    circle->c = rand() % 27 + 97;
+    circle->c = rand() % 26 + 97;
 
     cpFloat radius = 22;
     cpFloat mass = 2;
