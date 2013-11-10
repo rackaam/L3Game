@@ -5,6 +5,7 @@
 
 #include <SDL/SDL_gfxPrimitives.h>
 #include <SDL/SDL_rotozoom.h>
+#include <SDL/SDL_ttf.h>
 #include <time.h>
 #include "chipmunk/chipmunk.h"
 
@@ -13,7 +14,7 @@ extern int circlesNumber;
 typedef struct Circle Circle;
 struct Circle
 {
-    char c;
+    char c[2];
     int color;
     int affected;
     cpBody* body;
@@ -21,6 +22,8 @@ struct Circle
     SDL_Surface* surface;
 };
 
+void circleInit();
+void circleQuit();
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface);
 void freeCircle(Circle* circle);
 void renderCircle(SDL_Surface* surface, Circle* circle);

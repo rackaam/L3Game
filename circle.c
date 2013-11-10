@@ -1,14 +1,19 @@
 #include "circle.h"
 
+
+TTF_Font* font = NULL;
+SDL_Color fontColor = {255, 255, 255};
+
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
 {
-    circle->c = rand() % 26 + 97;
+    circle->c[0] = rand() % 26 + 97;
+    circle->c[1] = '\0';
 
     cpFloat radius = 22;
     cpFloat mass = 2;
-    circle->surface = SDL_CreateRGBSurface(SDL_HWSURFACE, radius * 2, radius * 2
-                                           , 32, 0xFF000000, 0x00FF0000,
-                                           0x0000FF00, 0x000000FF);
+    circle->surface = SDL_CreateRGBSurface(SDL_HWSURFACE, radius * 2 + 1,
+                                           radius * 2, 32, 0xFF000000,
+                                           0x00FF0000, 0x0000FF00, 0x000000FF);
     circle->color = SDL_MapRGB(circle->surface->format, 0, 0, 255);
 
     cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
@@ -45,15 +50,26 @@ void renderCircle(SDL_Surface* surface, Circle* circle)
     {
         filledCircleColor(circle->surface, radius, radius, radius, circle->color);
     }
-    characterColor(circle->surface, 18, 18, circle->c,
-                   SDL_MapRGB(circle->surface->format, 250, 0, 0));
+    SDL_Surface* c = TTF_RenderText_Blended(font, circle->c, fontColor);
     cpFloat angle = -cpBodyGetAngle(circle->body);
-    SDL_Surface* rotatedSurface = rotozoomSurface(circle->surface,
+    SDL_Surface* rotatedSurface = rotozoomSurface(c,
                                   angle * TO_DEGREES, 1, SMOOTHING_ON);
-    int xOffset = (rotatedSurface->w - circle->surface->w) / 2;
-    int yOffset = (rotatedSurface->h - circle->surface->h) / 2;
-    rect.x = pos.x - radius - xOffset;
-    rect.y = pos.y - radius - yOffset;
-    SDL_BlitSurface(rotatedSurface, NULL, surface, &rect);
+    rect.x = (2 * radius - rotatedSurface->w) / 2;
+    rect.y = (2 * radius - rotatedSurface->h) / 2;
+    SDL_BlitSurface(rotatedSurface, NULL, circle->surface, &rect);
+    rect.x = pos.x - radius;
+    rect.y = pos.y - radius;
+    SDL_BlitSurface(circle->surface, NULL, surface, &rect);
+    SDL_FreeSurface(c);
     SDL_FreeSurface(rotatedSurface);
+}
+
+void circleInit()
+{
+    font = TTF_OpenFont("UbuntuMono-R.ttf", 32);
+}
+
+void circleQuit()
+{
+    TTF_CloseFont(font);
 }
