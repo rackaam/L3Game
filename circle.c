@@ -1,7 +1,8 @@
 #include "circle.h"
 
-
 TTF_Font* font = NULL;
+int colors[3];
+int darkLayer;
 SDL_Color fontColor = {255, 255, 255};
 
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
@@ -14,7 +15,7 @@ void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
     circle->surface = SDL_CreateRGBSurface(SDL_HWSURFACE, radius * 2 + 1,
                                            radius * 2, 32, 0xFF000000,
                                            0x00FF0000, 0x0000FF00, 0x000000FF);
-    circle->color = SDL_MapRGB(circle->surface->format, 0, 0, 255);
+    circle->color = colors[rand() % 3];
 
     cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
 
@@ -41,14 +42,13 @@ void renderCircle(SDL_Surface* surface, Circle* circle)
     cpFloat radius = cpCircleShapeGetRadius(circle->shape);
     SDL_Rect rect;
     cpVect pos = cpBodyGetPos(circle->body);
+
+    filledCircleColor(circle->surface, radius, radius, radius, circle->color);
+
     if(circle->affected)
     {
         filledCircleColor(circle->surface, radius, radius, radius,
-                          SDL_MapRGB(circle->surface->format, 0, 200, 255));
-    }
-    else
-    {
-        filledCircleColor(circle->surface, radius, radius, radius, circle->color);
+                          darkLayer);
     }
     SDL_Surface* c = TTF_RenderText_Blended(font, circle->c, fontColor);
     cpFloat angle = -cpBodyGetAngle(circle->body);
@@ -67,6 +67,13 @@ void renderCircle(SDL_Surface* surface, Circle* circle)
 void circleInit()
 {
     font = TTF_OpenFont("UbuntuMono-R.ttf", 32);
+    SDL_Surface* s = SDL_CreateRGBSurface(SDL_HWSURFACE, 1, 1, 32, 0xFF000000,
+                                          0x00FF0000, 0x0000FF00, 0x000000FF);
+    colors[0] = SDL_MapRGB(s->format, 255, 0, 0);
+    colors[1] = SDL_MapRGB(s->format, 0, 255, 0);
+    colors[2] = SDL_MapRGB(s->format, 0, 0, 255);
+    darkLayer = SDL_MapRGBA(s->format, 0, 0, 0, 200);
+    SDL_FreeSurface(s);
 }
 
 void circleQuit()
