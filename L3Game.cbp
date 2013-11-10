@@ -20,6 +20,7 @@
 					<Add library="SDL" />
 					<Add library="./libchipmunk.a" />
 					<Add library="SDL_gfx" />
+					<Add library="SDL_ttf" />
 				</Linker>
 			</Target>
 		</Build>

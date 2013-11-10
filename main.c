@@ -12,6 +12,8 @@ int circlesNumber = 0;
 
 int main(void)
 {
+    TTF_Init();
+    circleInit();
     cpVect mouse1 = cpv(-1, -1);
     cpVect mouse2 = cpv(-1, -1);
     int drawLine = 0;
@@ -127,6 +129,9 @@ int main(void)
     }
     cpSpaceFree(space);
 
+    circleQuit();
+    TTF_Quit();
+    SDL_Quit();
     return 0;
 }
 
@@ -218,7 +223,7 @@ void selection(Circle* circles)
     {
         if(circles[i].affected)
         {
-            str[charNB++] = circles[i].c;
+            str[charNB++] = circles[i].c[0];
         }
     }
     if(charNB)
