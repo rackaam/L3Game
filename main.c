@@ -171,6 +171,7 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
     return cpFalse; // Aucune collision avec ce segment
 }
 
+/*
 char firstRule(char string)
 {
     int g,i,j,size=strlen(string);
@@ -213,6 +214,7 @@ char firstRule(char string)
     }
 
 }
+*/
 
 void selection(Circle* circles)
 {
@@ -230,7 +232,7 @@ void selection(Circle* circles)
     {
         // Call to function Rules1 !!!
         printf("Selected letters : %s\n", str);
-        char wordFound[20]=firstRule(str);
+//        char wordFound[20]=firstRule(str);
     }
 }
 
