@@ -27,18 +27,19 @@ void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
     cpShapeSetElasticity(circle->shape, 0.9);
     circle->shape->collision_type = 0;
     circle->affected = 0;
-    circlesNumber++;
 }
 
-void freeCircle(Circle* circle)
+void freeCircle(void* data)
 {
+    Circle* circle = (Circle*)data;
     cpShapeFree(circle->shape);
     cpBodyFree(circle->body);
-    circlesNumber--;
+    free(circle);
 }
 
-void renderCircle(SDL_Surface* surface, Circle* circle)
+void renderCircle(void* data, void* surface)
 {
+    Circle* circle = (Circle*)data;
     cpFloat radius = cpCircleShapeGetRadius(circle->shape);
     SDL_Rect rect;
     cpVect pos = cpBodyGetPos(circle->body);
@@ -59,9 +60,30 @@ void renderCircle(SDL_Surface* surface, Circle* circle)
     SDL_BlitSurface(rotatedSurface, NULL, circle->surface, &rect);
     rect.x = pos.x - radius;
     rect.y = pos.y - radius;
-    SDL_BlitSurface(circle->surface, NULL, surface, &rect);
+    SDL_BlitSurface(circle->surface, NULL, (SDL_Surface*)surface, &rect);
     SDL_FreeSurface(c);
     SDL_FreeSurface(rotatedSurface);
+}
+
+void checkIfAffected(void* data, void* userData)
+{
+    if(((Circle*)data)->shape == (cpShape*)userData)
+    {
+        ((Circle*)data)->affected = 1;
+    }
+}
+
+void resetAffected(void* data, void* ignored)
+{
+    ((Circle*)data)->affected = 0;
+}
+
+void addCharIfAffected(void* data, void* userData)
+{
+    if(((Circle*)data)->affected)
+    {
+        strncat((char*)userData, ((Circle*)data)->c, 1);
+    }
 }
 
 void circleInit()

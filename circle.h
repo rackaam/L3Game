@@ -9,8 +9,6 @@
 #include <time.h>
 #include "chipmunk/chipmunk.h"
 
-extern int circlesNumber;
-
 typedef struct Circle Circle;
 struct Circle
 {
@@ -25,7 +23,10 @@ struct Circle
 void circleInit();
 void circleQuit();
 void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface);
-void freeCircle(Circle* circle);
-void renderCircle(SDL_Surface* surface, Circle* circle);
+void freeCircle(void* circle);
+void renderCircle(void* circle, void* surface);
+void checkIfAffected(void* data, void* userData);
+void resetAffected(void* data, void* userData);
+void addCharIfAffected(void* data, void* userData);
 
 #endif // CIRCLE_H_INCLUDED

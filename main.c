@@ -2,13 +2,13 @@
 #include <glib.h>
 #include "circle.h"
 
+#define CIRCLES_NUMBER 5
+
 void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-void selection(Circle* circles);
-
-int circlesNumber = 0;
+void selection(GSList* liste);
 
 int main(void)
 {
@@ -48,17 +48,19 @@ int main(void)
     cpSpaceAddShape(space, container[1]);
     cpSpaceAddShape(space, container[2]);
 
-    Circle circles[10];
+    GSList* liste = NULL;
     int i;
-    for(i = 0; i < 4; i++)
+    for(i = 0; i < CIRCLES_NUMBER; i++)
     {
-        initCircle(&(circles[i]), space, surface);
+        Circle* circle = malloc(sizeof(Circle));
+        initCircle(circle, space, surface);
+        liste = g_slist_append(liste, circle );
     }
 
     cpFloat timeStep = 1.0 / 8.0;
     int run = 1;
     SDL_Event event;
-    cpSpaceAddCollisionHandler(space, 0, 1, NULL, preSolve, NULL, NULL, circles);
+    cpSpaceAddCollisionHandler(space, 0, 1, NULL, preSolve, NULL, NULL, liste);
 
     while (run)
     {
@@ -85,7 +87,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                selection(circles);
+                selection(liste);
                 break;
             }
             if(event.key.keysym.sym == SDLK_ESCAPE)
@@ -94,10 +96,8 @@ int main(void)
             }
         }
 
-        for(i = 0; i < circlesNumber; i++)
-        {
-            circles[i].affected = 0;
-        }
+        g_slist_foreach(liste, resetAffected, NULL);
+
         cpShape* mouseSeg = cpSegmentShapeNew(space->staticBody,
                                               cpv(mouse1.x, mouse1.y),
                                               cpv(mouse2.x, mouse2.y), 0);
@@ -108,10 +108,9 @@ int main(void)
         }
         cpSpaceStep(space, timeStep);
         renderContainer(surface, container, 3);
-        for(i = 0; i < circlesNumber; i++)
-        {
-            renderCircle(surface, &(circles[i]));
-        }
+
+        g_slist_foreach(liste, renderCircle, surface);
+
         if(drawLine)
         {
             lineColor(surface, mouse1.x, mouse1.y,
@@ -123,10 +122,7 @@ int main(void)
         SDL_Delay(1000.0 / 60.0);
     }
 
-    while(circlesNumber)
-    {
-        freeCircle(&(circles[i]));
-    }
+    g_slist_free_full(liste, freeCircle);
     cpSpaceFree(space);
 
     circleQuit();
@@ -158,16 +154,7 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
 {
     cpShape *a, *b;
     cpArbiterGetShapes(arb, &a, &b);
-    int i;
-    Circle* circles = (Circle*)data;
-    for(i = 0; i < circlesNumber; i++)
-    {
-        if(circles[i].shape == a)
-        {
-            circles[i].affected = 1;
-        }
-    }
-
+    g_slist_foreach(((GSList*)data), checkIfAffected, a);
     return cpFalse; // Aucune collision avec ce segment
 }
 
@@ -216,23 +203,14 @@ char firstRule(char string)
 }
 */
 
-void selection(Circle* circles)
+void selection(GSList* liste)
 {
-    int i;
-    char str[20];
-    int charNB = 0;
-    for(i = 0; i < circlesNumber; i++)
+    char str[20] = "";
+    g_slist_foreach(liste, addCharIfAffected, str);
+    if(strlen(str))
     {
-        if(circles[i].affected)
-        {
-            str[charNB++] = circles[i].c[0];
-        }
-    }
-    if(charNB)
-    {
-        // Call to function Rules1 !!!
         printf("Selected letters : %s\n", str);
-//        char wordFound[20]=firstRule(str);
+        //char wordFound[20]=firstRule(str);
     }
 }
 
