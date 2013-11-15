@@ -43,3 +43,13 @@ char* firstRule(char* string)
     */
     return "testRule1";
 }
+
+char* secondRule(char* str)
+{
+    return "testSecondeRule";
+}
+
+char* thirdRule(char* str)
+{
+    return "testThirdRule";
+}
