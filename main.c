@@ -3,6 +3,7 @@
 #include "algo.h"
 
 #define CIRCLES_NUMBER 5
+#define VIDEO_RECORDING 0
 
 void pause();
 cpSpace* getSpace(void);
@@ -20,11 +21,9 @@ int main(void)
     {
         char* keyTemp = g_strdup(s);
         char* valTemp = g_strdup(s);
-        printf("Essai insertion : %s\n", s);
         g_hash_table_insert(hashTable, keyTemp, valTemp);
     }
     fclose(file);
-
 
     TTF_Init();
     circleInit();
@@ -75,7 +74,7 @@ int main(void)
     int run = 1;
     SDL_Event event;
     cpSpaceAddCollisionHandler(space, 0, 1, NULL, preSolve, NULL, NULL, liste);
-
+    int frameCounter = 0;
     while (run)
     {
         SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 255, 255, 255));
@@ -132,6 +131,13 @@ int main(void)
             cpSpaceRemoveShape(space, mouseSeg);
         }
         cpShapeFree(mouseSeg);
+        if(VIDEO_RECORDING)
+        {
+            char buf[20];
+            sprintf(buf, "img/frame_%04d.bmp", frameCounter);
+            SDL_SaveBMP(surface, buf);
+            frameCounter++;
+        }
         SDL_Flip(surface);
         SDL_Delay(1000.0 / 60.0);
     }
