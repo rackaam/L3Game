@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <glib.h>
 #include "circle.h"
 #include "algo.h"
 
@@ -9,7 +8,8 @@ void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-void selection(GSList* liste, GHashTable *hashtable);
+void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable);
+gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
 
 int main(void)
 {
@@ -46,16 +46,16 @@ int main(void)
     cpSpace* space = getSpace();
 
     cpShape* container[3];
-    container[0] = cpSegmentShapeNew(space->staticBody, cpv(100, 150),
-                                     cpv(200, 300), 0);
+    container[0] = cpSegmentShapeNew(space->staticBody, cpv(100, 250),
+                                     cpv(200, 400), 0);
     cpShapeSetFriction(container[0], 0.5);
     cpShapeSetElasticity(container[0], 0.5);
-    container[1] = cpSegmentShapeNew(space->staticBody, cpv(200, 300),
-                                     cpv(400, 300), 0);
+    container[1] = cpSegmentShapeNew(space->staticBody, cpv(200, 400),
+                                     cpv(400, 400), 0);
     cpShapeSetFriction(container[1], 0.5);
     cpShapeSetElasticity(container[1], 0.5);
-    container[2] = cpSegmentShapeNew(space->staticBody, cpv(400, 300),
-                                     cpv(500, 150), 0);
+    container[2] = cpSegmentShapeNew(space->staticBody, cpv(400, 400),
+                                     cpv(500, 250), 0);
     cpShapeSetFriction(container[2], 0.5);
     cpShapeSetElasticity(container[2], 0.5);
     cpSpaceAddShape(space, container[0]);
@@ -101,7 +101,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                selection(liste, hashTable);
+                selection(liste, &mouse1, hashTable);
                 break;
             }
             if(event.key.keysym.sym == SDLK_ESCAPE)
@@ -172,16 +172,27 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
     return cpFalse; // Aucune collision avec ce segment
 }
 
-void selection(GSList* liste, GHashTable *hashtable)
+void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable)
 {
+    GSList* circles = NULL;
+    g_slist_foreach(liste, addIfAffected, &circles);
+    circles = g_slist_sort_with_data(circles, sortFunction, startPos);
     char str[20] = "";
-    g_slist_foreach(liste, addCharIfAffected, str);
+    g_slist_foreach(circles, addChar, str);
     if(strlen(str))
     {
         printf("Selected letters : %s\n", str);
         printf("Mot : %s\n", firstRule(str, hashtable));
         //char wordFound[20]=firstRule(str);
     }
+}
+
+gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos)
+{
+    cpVect* start = (cpVect*) startPos;
+    cpVect vA = cpBodyGetPos(((Circle*)a)->body);
+    cpVect vB = cpBodyGetPos(((Circle*)b)->body);
+    return (int)(cpvdistsq(*start, vA) - cpvdistsq(*start, vB));
 }
 
 void pause()

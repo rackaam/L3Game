@@ -78,12 +78,18 @@ void resetAffected(void* data, void* ignored)
     ((Circle*)data)->affected = 0;
 }
 
-void addCharIfAffected(void* data, void* userData)
+void addIfAffected(void* data, void* userData)
 {
+    GSList** pp = (GSList**)userData;
     if(((Circle*)data)->affected)
     {
-        strncat((char*)userData, ((Circle*)data)->c, 1);
+        *pp = g_slist_append((GSList*)*pp, (Circle*)data);
     }
+}
+
+void addChar(void* data, void* userData)
+{
+    strncat((char*)userData, ((Circle*)data)->c, 1);
 }
 
 void circleInit()

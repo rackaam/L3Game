@@ -6,6 +6,7 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <SDL/SDL_rotozoom.h>
 #include <SDL/SDL_ttf.h>
+#include <glib.h>
 #include <time.h>
 #include "chipmunk/chipmunk.h"
 
@@ -27,6 +28,7 @@ void freeCircle(void* circle);
 void renderCircle(void* circle, void* surface);
 void checkIfAffected(void* data, void* userData);
 void resetAffected(void* data, void* userData);
-void addCharIfAffected(void* data, void* userData);
+void addIfAffected(void* data, void* userData);
+void addChar(void* data, void* userData);
 
 #endif // CIRCLE_H_INCLUDED
