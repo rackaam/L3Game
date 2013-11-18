@@ -9,10 +9,23 @@ void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-void selection(GSList* liste);
+void selection(GSList* liste, GHashTable *hashtable);
 
 int main(void)
 {
+    GHashTable *hashTable = g_hash_table_new(g_str_hash, g_str_equal);
+    char s[30];
+    FILE* file = fopen("dico", "r");
+    while(fscanf(file, "%s", s) == 1)
+    {
+        char* keyTemp = g_strdup(s);
+        char* valTemp = g_strdup(s);
+        printf("Essai insertion : %s\n", s);
+        g_hash_table_insert(hashTable, keyTemp, valTemp);
+    }
+    fclose(file);
+
+
     TTF_Init();
     circleInit();
     cpVect mouse1 = cpv(-1, -1);
@@ -88,7 +101,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                selection(liste);
+                selection(liste, hashTable);
                 break;
             }
             if(event.key.keysym.sym == SDLK_ESCAPE)
@@ -159,14 +172,14 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
     return cpFalse; // Aucune collision avec ce segment
 }
 
-void selection(GSList* liste)
+void selection(GSList* liste, GHashTable *hashtable)
 {
     char str[20] = "";
     g_slist_foreach(liste, addCharIfAffected, str);
     if(strlen(str))
     {
         printf("Selected letters : %s\n", str);
-        printf("Mot : %s\n", firstRule(str));
+        printf("Mot : %s\n", firstRule(str, hashtable));
         //char wordFound[20]=firstRule(str);
     }
 }

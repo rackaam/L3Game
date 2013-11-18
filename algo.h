@@ -2,8 +2,9 @@
 #define ALGO_H_INCLUDED
 
 #include <string.h>
+#include <glib.h>
 
-char* firstRule(char* string);
+char* firstRule(char* string,GHashTable *hashtable);
 char* secondRule(char* string);
 char* thirdRule(char* string);
 
