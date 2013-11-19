@@ -66,7 +66,6 @@ int main(void)
     for(i = 0; i < CIRCLES_NUMBER; i++)
     {
         Circle* circle = malloc(sizeof(Circle));
-//        sleep(10);
         initCircle(circle, space, surface);
         liste = g_slist_append(liste, circle );
     }
