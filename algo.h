@@ -5,7 +5,7 @@
 #include <glib.h>
 #include <stdio.h>
 
-char* firstRule(char* string,GHashTable *hashtable);
+char* firstRule(char* string, GHashTable *hashtable);
 char* secondRule(char* string);
 char* thirdRule(char* string);
 

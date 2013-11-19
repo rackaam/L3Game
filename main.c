@@ -46,7 +46,7 @@ int main(void)
 
     cpShape* container[3];
     container[0] = cpSegmentShapeNew(space->staticBody, cpv(20, 10),
-                                     cpv(70,450), 0);
+                                     cpv(70, 450), 0);
     cpShapeSetFriction(container[0], 0.5);
     cpShapeSetElasticity(container[0], 0.5);
     container[1] = cpSegmentShapeNew(space->staticBody, cpv(70, 450),
@@ -188,11 +188,14 @@ void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable)
     g_slist_foreach(circles, addChar, str);
     if(strlen(str))
     {
-        char* buffer=NULL;
+        char* wordFound = NULL;
+        wordFound = firstRule(str, hashtable);
         printf("Selected letters : %s\n", str);
-        printf("Mot : %s\n", firstRule(str, hashtable));
-        //char wordFound[20]=firstRule(str);
-        free(buffer);
+        if(wordFound)
+        {
+            printf("Mot : %s\n", wordFound);
+            free(wordFound);
+        }
     }
 }
 
