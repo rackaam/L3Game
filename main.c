@@ -2,7 +2,7 @@
 #include "circle.h"
 #include "algo.h"
 
-#define CIRCLES_NUMBER 5
+#define CIRCLES_NUMBER 20
 #define VIDEO_RECORDING 0
 
 void pause();
@@ -45,16 +45,16 @@ int main(void)
     cpSpace* space = getSpace();
 
     cpShape* container[3];
-    container[0] = cpSegmentShapeNew(space->staticBody, cpv(100, 250),
-                                     cpv(200, 400), 0);
+    container[0] = cpSegmentShapeNew(space->staticBody, cpv(20, 10),
+                                     cpv(70,450), 0);
     cpShapeSetFriction(container[0], 0.5);
     cpShapeSetElasticity(container[0], 0.5);
-    container[1] = cpSegmentShapeNew(space->staticBody, cpv(200, 400),
-                                     cpv(400, 400), 0);
+    container[1] = cpSegmentShapeNew(space->staticBody, cpv(70, 450),
+                                     cpv(530, 450), 0);
     cpShapeSetFriction(container[1], 0.5);
     cpShapeSetElasticity(container[1], 0.5);
-    container[2] = cpSegmentShapeNew(space->staticBody, cpv(400, 400),
-                                     cpv(500, 250), 0);
+    container[2] = cpSegmentShapeNew(space->staticBody, cpv(530, 450),
+                                     cpv(580, 10), 0);
     cpShapeSetFriction(container[2], 0.5);
     cpShapeSetElasticity(container[2], 0.5);
     cpSpaceAddShape(space, container[0]);
@@ -66,6 +66,7 @@ int main(void)
     for(i = 0; i < CIRCLES_NUMBER; i++)
     {
         Circle* circle = malloc(sizeof(Circle));
+//        sleep(10);
         initCircle(circle, space, surface);
         liste = g_slist_append(liste, circle );
     }
@@ -187,9 +188,11 @@ void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable)
     g_slist_foreach(circles, addChar, str);
     if(strlen(str))
     {
+        char* buffer=NULL;
         printf("Selected letters : %s\n", str);
         printf("Mot : %s\n", firstRule(str, hashtable));
         //char wordFound[20]=firstRule(str);
+        free(buffer);
     }
 }
 

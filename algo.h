@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <glib.h>
+#include <stdio.h>
 
 char* firstRule(char* string,GHashTable *hashtable);
 char* secondRule(char* string);

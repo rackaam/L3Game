@@ -24,8 +24,14 @@ char* firstRule(char* string, GHashTable *hashTable)
         }
 
         //Teste si research est le mot recherché
-   //     if ( g_hash_table_contains(hashTable, research))
-     //       return research;
+        if ( g_hash_table_contains(hashTable, research))
+            {
+            printf("Yes\n Research a trouvé %s\n", research);
+            char * buffer;
+            buffer = malloc((j) * sizeof(char));
+            strcpy(buffer, research);
+            return buffer;
+            }
 
 
         j=0;
@@ -38,8 +44,14 @@ char* firstRule(char* string, GHashTable *hashTable)
         }
 
         //Teste si research2 est le mot recherché
-//            if ( research2=='nos')
-        //              return research2;
+   if ( g_hash_table_contains(hashTable, research2))
+            {
+            printf("Yes\n Research2 a trouvé %s\n", research2);
+            char * buffer;
+            buffer = malloc((j) * sizeof(char));
+            strcpy(buffer, research2);
+            return buffer;
+            }
 
 
     }
