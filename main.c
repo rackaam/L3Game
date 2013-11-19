@@ -2,7 +2,7 @@
 #include "circle.h"
 #include "algo.h"
 
-#define CIRCLES_NUMBER 20
+#define CIRCLES_NUMBER 6
 #define VIDEO_RECORDING 0
 
 void pause();
@@ -102,20 +102,27 @@ int main(void)
                 drawLine = 0;
                 selection(liste, &mouse1, hashTable);
                 break;
-            }
-            if(event.key.keysym.sym == SDLK_ESCAPE)
-            {
-                run = 0;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_ESCAPE:
+                    run = 0;
+                    break;
+                default:
+                    break;
+                }
+                break;
             }
         }
 
         g_slist_foreach(liste, resetAffected, NULL);
 
-        cpShape* mouseSeg = cpSegmentShapeNew(space->staticBody,
-                                              cpv(mouse1.x, mouse1.y),
-                                              cpv(mouse2.x, mouse2.y), 0);
+        cpShape* mouseSeg = NULL;
         if(drawLine)
         {
+            mouseSeg = cpSegmentShapeNew(space->staticBody,
+                                         cpv(mouse1.x, mouse1.y),
+                                         cpv(mouse2.x, mouse2.y), 0);
             mouseSeg->collision_type = 1;
             cpSpaceAddShape(space, mouseSeg);
         }
@@ -129,8 +136,8 @@ int main(void)
             lineColor(surface, mouse1.x, mouse1.y,
                       mouse2.x, mouse2.y, 0x000000FF);
             cpSpaceRemoveShape(space, mouseSeg);
+            cpShapeFree(mouseSeg);
         }
-        cpShapeFree(mouseSeg);
         if(VIDEO_RECORDING)
         {
             char buf[20];
