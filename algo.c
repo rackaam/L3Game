@@ -46,7 +46,6 @@ char* firstRule(char* string, GHashTable *hashTable)
         //Teste si research2 est le mot recherché
         if ( g_hash_table_contains(hashTable, research2))
         {
-            printf("Yes\n Research2 a trouvé %s\n", research2);
             char * buffer;
             buffer = malloc((j) * sizeof(char));
             strcpy(buffer, research2);

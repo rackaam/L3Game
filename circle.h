@@ -30,5 +30,6 @@ void checkIfAffected(void* data, void* userData);
 void resetAffected(void* data, void* userData);
 void addIfAffected(void* data, void* userData);
 void addChar(void* data, void* userData);
+void removeCircleFromSpace(cpSpace* space, Circle* circle);
 
 #endif // CIRCLE_H_INCLUDED

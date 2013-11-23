@@ -2,14 +2,14 @@
 #include "circle.h"
 #include "algo.h"
 
-#define CIRCLES_NUMBER 6
+#define CIRCLES_NUMBER 10
 #define VIDEO_RECORDING 0
 
 void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable);
+void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space);
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
 
 int main(void)
@@ -100,7 +100,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                selection(liste, &mouse1, hashTable);
+                selection(liste, &mouse1, hashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -185,7 +185,7 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
     return cpFalse; // Aucune collision avec ce segment
 }
 
-void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable)
+void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space)
 {
     GSList* circles = NULL;
     g_slist_foreach(liste, addIfAffected, &circles);
@@ -200,6 +200,28 @@ void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable)
         if(wordFound)
         {
             printf("Mot : %s\n", wordFound);
+            char c;
+            int i = 0;
+            Circle* circle;
+            GSList* elem;
+            while((c = wordFound[i++]) != '\0')
+            {
+                elem = circles;
+                while(elem)
+                {
+                    circle = (Circle*)elem->data;
+                    if(circle->affected && circle->c[0] == c)
+                    {
+                        liste = g_slist_remove(liste, circle);
+                        removeCircleFromSpace(space, circle);
+                        elem = NULL;
+                    }
+                    else
+                    {
+                        elem = elem->next;
+                    }
+                }
+            }
             free(wordFound);
         }
     }

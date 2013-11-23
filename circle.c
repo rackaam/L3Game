@@ -92,6 +92,13 @@ void addChar(void* data, void* userData)
     strncat((char*)userData, ((Circle*)data)->c, 1);
 }
 
+void removeCircleFromSpace(cpSpace* space, Circle* circle)
+{
+    cpSpaceRemoveShape(space, circle->shape);
+    cpSpaceRemoveBody(space, circle->body);
+    //freeCircle(circle);
+}
+
 void circleInit()
 {
     font = TTF_OpenFont("UbuntuMono-R.ttf", 32);
