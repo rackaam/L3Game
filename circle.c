@@ -96,7 +96,7 @@ void removeCircleFromSpace(cpSpace* space, Circle* circle)
 {
     cpSpaceRemoveShape(space, circle->shape);
     cpSpaceRemoveBody(space, circle->body);
-    //freeCircle(circle);
+    freeCircle(circle);
 }
 
 void circleInit()

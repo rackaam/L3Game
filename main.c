@@ -9,7 +9,7 @@ void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space);
+GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space);
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
 
 int main(void)
@@ -73,7 +73,7 @@ int main(void)
     cpFloat timeStep = 1.0 / 8.0;
     int run = 1;
     SDL_Event event;
-    cpSpaceAddCollisionHandler(space, 0, 1, NULL, preSolve, NULL, NULL, liste);
+    cpSpaceAddCollisionHandler(space, 0, 1, NULL, preSolve, NULL, NULL, &liste);
     int frameCounter = 0;
     while (run)
     {
@@ -100,7 +100,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                selection(liste, &mouse1, hashTable, space);
+                liste = selection(liste, &mouse1, hashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -129,7 +129,9 @@ int main(void)
         cpSpaceStep(space, timeStep);
         renderContainer(surface, container, 3);
 
+        printf("=> debut\n");
         g_slist_foreach(liste, renderCircle, surface);
+        printf("=> fin\n");
 
         if(drawLine)
         {
@@ -181,11 +183,11 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
 {
     cpShape *a, *b;
     cpArbiterGetShapes(arb, &a, &b);
-    g_slist_foreach(((GSList*)data), checkIfAffected, a);
+    g_slist_foreach((*(GSList**)data), checkIfAffected, a);
     return cpFalse; // Aucune collision avec ce segment
 }
 
-void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space)
+GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space)
 {
     GSList* circles = NULL;
     g_slist_foreach(liste, addIfAffected, &circles);
@@ -225,6 +227,7 @@ void selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* 
             free(wordFound);
         }
     }
+    return liste;
 }
 
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos)
