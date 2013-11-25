@@ -1,6 +1,5 @@
 #include "circle.h"
 
-TTF_Font* font = NULL;
 int colors[3];
 int darkLayer;
 SDL_Color fontColor = {255, 255, 255};

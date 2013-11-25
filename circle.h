@@ -10,6 +10,8 @@
 #include <time.h>
 #include "chipmunk/chipmunk.h"
 
+extern TTF_Font* font;
+
 typedef struct Circle Circle;
 struct Circle
 {

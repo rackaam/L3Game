@@ -8,9 +8,16 @@
 void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
+void renderScore(SDL_Surface* surface);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
 GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space);
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
+
+/*Global----------*/
+int score = 0;
+// extern circle.h
+TTF_Font* font;
+/*----------------*/
 
 int main(void)
 {
@@ -30,6 +37,7 @@ int main(void)
     cpVect mouse1 = cpv(-1, -1);
     cpVect mouse2 = cpv(-1, -1);
     int drawLine = 0;
+    SDL_Color scoreTextColor = {0, 0, 0};
     SDL_Init( SDL_INIT_VIDEO );
 
     SDL_Surface* surface = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE |
@@ -45,7 +53,7 @@ int main(void)
     cpSpace* space = getSpace();
 
     cpShape* container[3];
-    container[0] = cpSegmentShapeNew(space->staticBody, cpv(20, 10),
+    container[0] = cpSegmentShapeNew(space->staticBody, cpv(20, 40),
                                      cpv(70, 450), 0);
     cpShapeSetFriction(container[0], 0.5);
     cpShapeSetElasticity(container[0], 0.5);
@@ -54,7 +62,7 @@ int main(void)
     cpShapeSetFriction(container[1], 0.5);
     cpShapeSetElasticity(container[1], 0.5);
     container[2] = cpSegmentShapeNew(space->staticBody, cpv(530, 450),
-                                     cpv(580, 10), 0);
+                                     cpv(580, 40), 0);
     cpShapeSetFriction(container[2], 0.5);
     cpShapeSetElasticity(container[2], 0.5);
     cpSpaceAddShape(space, container[0]);
@@ -70,6 +78,9 @@ int main(void)
         liste = g_slist_append(liste, circle );
     }
 
+    SDL_Rect rect0;
+    rect0.x = 0;
+    rect0.y = 0;
     cpFloat timeStep = 1.0 / 8.0;
     int run = 1;
     SDL_Event event;
@@ -138,6 +149,10 @@ int main(void)
             cpSpaceRemoveShape(space, mouseSeg);
             cpShapeFree(mouseSeg);
         }
+        char buff[15];
+        sprintf(buff, "Score : %d", score);
+        SDL_Surface* scoreSurface = TTF_RenderText_Blended(font, buff, scoreTextColor);
+        SDL_BlitSurface(scoreSurface, NULL, surface, &rect0);
         if(VIDEO_RECORDING)
         {
             char buf[20];
@@ -197,8 +212,10 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
         char* wordFound = NULL;
         wordFound = firstRule(str, hashtable);
         printf("Selected letters : %s\n", str);
+        printf("Score: %d\n", score);
         if(wordFound)
         {
+            score += strlen(wordFound);
             printf("Mot : %s\n", wordFound);
             char c;
             int i = 0;
