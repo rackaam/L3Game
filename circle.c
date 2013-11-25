@@ -52,6 +52,12 @@ void renderCircle(void* data, void* surface)
                           darkLayer);
     }
     SDL_Surface* c = TTF_RenderText_Blended(font, circle->c, fontColor);
+    if(circle->c[0] == 'b' || circle->c[0] == 'd' || circle->c[0] == 'p' ||
+            circle->c[0] == 'q' || circle->c[0] == 'u' || circle->c[0] == 'n' ||
+            circle->c[0] == 'w' || circle->c[0] == 'm')
+    {
+        boxColor(c, 0, c->h - 2, c->w, c->h, 0xFFFFFFFF);
+    }
     cpFloat angle = -cpBodyGetAngle(circle->body);
     SDL_Surface* rotatedSurface = rotozoomSurface(c,
                                   angle * TO_DEGREES, 1, SMOOTHING_ON);
