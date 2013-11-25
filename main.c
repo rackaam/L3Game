@@ -129,9 +129,7 @@ int main(void)
         cpSpaceStep(space, timeStep);
         renderContainer(surface, container, 3);
 
-        printf("=> debut\n");
         g_slist_foreach(liste, renderCircle, surface);
-        printf("=> fin\n");
 
         if(drawLine)
         {
