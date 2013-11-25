@@ -5,7 +5,7 @@ int colors[3];
 int darkLayer;
 SDL_Color fontColor = {255, 255, 255};
 
-void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
+void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface, int line)
 {
     circle->c[0] = rand() % 26 + 97;
     circle->c[1] = '\0';
@@ -20,7 +20,7 @@ void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface)
     cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
 
     circle->body = cpSpaceAddBody(space, cpBodyNew(mass, moment));
-    cpBodySetPos(circle->body, cpv(rand() % 360 + 120, 50));
+    cpBodySetPos(circle->body, cpv(rand() % 360 + 120, 50 - line * 24));
     circle->shape = cpSpaceAddShape(space, cpCircleShapeNew(circle->body,
                                     radius, cpvzero));
     cpShapeSetFriction(circle->shape, 0.8);

@@ -2,7 +2,7 @@
 #include "circle.h"
 #include "algo.h"
 
-#define CIRCLES_NUMBER 10
+#define CIRCLES_NUMBER 20
 #define VIDEO_RECORDING 0
 
 void pause();
@@ -66,7 +66,7 @@ int main(void)
     for(i = 0; i < CIRCLES_NUMBER; i++)
     {
         Circle* circle = malloc(sizeof(Circle));
-        initCircle(circle, space, surface);
+        initCircle(circle, space, surface, i%10);
         liste = g_slist_append(liste, circle );
     }
 
