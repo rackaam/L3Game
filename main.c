@@ -22,6 +22,7 @@ TTF_Font* font;
 int main(void)
 {
     GHashTable *hashTable = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable *anagramHashTable = g_hash_table_new(anagramHash, anagramEqual);
     char s[30];
     FILE* file = fopen("dico", "r");
     while(fscanf(file, "%s", s) == 1)
@@ -29,6 +30,7 @@ int main(void)
         char* keyTemp = g_strdup(s);
         char* valTemp = g_strdup(s);
         g_hash_table_insert(hashTable, keyTemp, valTemp);
+        g_hash_table_insert(anagramHashTable, keyTemp, valTemp);
     }
     fclose(file);
 
@@ -111,7 +113,8 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                liste = selection(liste, &mouse1, hashTable, space);
+                //liste = selection(liste, &mouse1, hashTable, space);
+                liste = selection(liste, &mouse1, anagramHashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -209,13 +212,14 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
     g_slist_foreach(circles, addChar, str);
     if(strlen(str))
     {
-        char* wordFound = NULL;
-        wordFound = firstRule(str, hashtable);
         printf("Selected letters : %s\n", str);
-        printf("Score: %d\n", score);
+        char* wordFound = NULL;
+        //wordFound = firstRule(str, hashtable);
+        wordFound = thirdRule(str, hashtable);
         if(wordFound)
         {
             score += strlen(wordFound);
+            printf("Score: %d\n", score);
             printf("Mot : %s\n", wordFound);
             char c;
             int i = 0;
@@ -239,6 +243,7 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
                     }
                 }
             }
+
             free(wordFound);
         }
     }

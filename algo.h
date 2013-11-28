@@ -4,9 +4,14 @@
 #include <string.h>
 #include <glib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-char* firstRule(char* string, GHashTable *hashtable);
-char* secondRule(char* string);
-char* thirdRule(char* string);
+guint anagramHash(gconstpointer key);
+gboolean anagramEqual(gconstpointer a, gconstpointer b);
+
+char* firstRule(char* str, GHashTable *hashtable);
+char* secondRule(char* str, GHashTable *hashtable);
+char* thirdRule(char* str, GHashTable *hashtable);
+
 
 #endif // ALGO_H_INCLUDED
