@@ -8,7 +8,7 @@ The given libchipmunk.a is 64 bit.
 
 ##TODO :
   * rules 1, 2, 3
-  * removal of the used letters
+  * ~~removal of the used letters~~
   * ~~video recording~~
   * valgrind
   * ??
