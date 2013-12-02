@@ -136,8 +136,8 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                //liste = selection(liste, &mouse1, hashTable, space);
-                liste = selection(liste, &mouse1, anagramHashTable, space);
+                liste = selection(liste, &mouse1, hashTable, space);
+                //liste = selection(liste, &mouse1, anagramHashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -243,7 +243,8 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
         printf("Selected letters : %s\n", str);
         char* wordFound = NULL;
         //wordFound = firstRule(str, hashtable);
-        wordFound = thirdRule(str, hashtable);
+        wordFound = secondRule(str, hashtable);
+        //wordFound = thirdRule(str, hashtable);
         if(wordFound)
         {
             strcpy(displayedWord, wordFound);
