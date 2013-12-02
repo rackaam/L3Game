@@ -59,49 +59,26 @@ gboolean anagramEqual(gconstpointer a, gconstpointer b)
 
 char* firstRule(char* str, GHashTable *hashTable)
 {
-    int g, i, j, size = strlen(str);
+    int  i, debut, fin, size = strlen(str);
 
-    char research[20], research2[20];
     for( i = 0; i < size; i++)
     {
-        memset (research, 0, sizeof (research));
-        memset (research2, 0, sizeof (research2));
-        j = 0;
-        g = i;
+        debut = 0;
+        fin = i;
 
-        while(g < size)
+        for(debut = 0; debut <= i; debut++, fin--)
         {
-            research[j] = str[g];
+            char research[20] = {0};
+            strncpy(research,&(str[debut]),size-i);
 
-            j = j + 1;
-            g = i + j;
-        }
-
-        //Teste si research est le mot recherché
-        if ( g_hash_table_contains(hashTable, research))
-        {
-            char * buffer;
-            buffer = malloc((j) * sizeof(char));
-            strcpy(buffer, research);
-            return buffer;
-        }
-
-        j = 0;
-        g = size - i - 1;
-
-        while(j <= g)
-        {
-            research2[g - j] = str[g - j];
-            j = j + 1;
-        }
-
-        //Teste si research2 est le mot recherché
-        if ( g_hash_table_contains(hashTable, research2))
-        {
-            char * buffer;
-            buffer = malloc((j) * sizeof(char));
-            strcpy(buffer, research2);
-            return buffer;
+            //Teste si research est le mot recherché
+            if ( g_hash_table_contains(hashTable, research))
+            {
+                char * buffer;
+                buffer = malloc((size-i) * sizeof(char));
+                strcpy(buffer, research);
+                return buffer;
+            }
         }
     }
 
@@ -117,3 +94,4 @@ char* thirdRule(char* str, GHashTable *hashtable)
 {
     return (char*)g_hash_table_lookup(hashtable, str);
 }
+
