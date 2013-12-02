@@ -12,6 +12,7 @@ void renderScore(SDL_Surface* surface);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
 GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space);
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
+void checkCharsDistribution(int count[]);
 
 /*Global----------*/
 int score = 0;
@@ -21,6 +22,23 @@ TTF_Font* font;
 
 int main(void)
 {
+    int count[26] = {0};
+    checkCharsDistribution(count);
+    int i, j, k = 0;
+    int spawnTabLen = 0;
+    for(i = 0; i < 26; i++)
+    {
+        spawnTabLen += count[i];
+    }
+    char* spawnsTab = malloc(spawnTabLen * sizeof(char));
+    for(i = 0; i < 26; i++)
+    {
+        for(j = 0; j < count[i]; j++)
+        {
+            spawnsTab[k++] = i + 'a';
+        }
+    }
+
     GHashTable *hashTable = g_hash_table_new(g_str_hash, g_str_equal);
     GHashTable *anagramHashTable = g_hash_table_new(anagramHash, anagramEqual);
     char s[30];
@@ -72,11 +90,10 @@ int main(void)
     cpSpaceAddShape(space, container[2]);
 
     GSList* liste = NULL;
-    int i;
     for(i = 0; i < CIRCLES_NUMBER; i++)
     {
         Circle* circle = malloc(sizeof(Circle));
-        initCircle(circle, space, surface, i % 10);
+        initCircle(circle, space, surface, i % 10, spawnsTab, spawnTabLen);
         liste = g_slist_append(liste, circle );
     }
 
@@ -256,6 +273,28 @@ gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos)
     cpVect vA = cpBodyGetPos(((Circle*)a)->body);
     cpVect vB = cpBodyGetPos(((Circle*)b)->body);
     return (int)(cpvdistsq(*start, vA) - cpvdistsq(*start, vB));
+}
+
+void checkCharsDistribution(int count[])
+{
+    FILE* file = fopen("dico", "r");
+    char c;
+    unsigned int total = 0;
+    while((c = fgetc(file)) != EOF)
+    {
+        if(c > 96 && c < 123)
+        {
+            count[c - 'a']++;
+            total++;
+        }
+    }
+    fclose(file);
+    total /= 100;
+    int i;
+    for(i = 0; i < 26; i++)
+    {
+        count[i] /= total;
+    }
 }
 
 void pause()

@@ -25,7 +25,8 @@ struct Circle
 
 void circleInit();
 void circleQuit();
-void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface, int line);
+void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface, int line
+                , char spawnsTab[], int tabLen);
 void freeCircle(void* circle);
 void renderCircle(void* circle, void* surface);
 void checkIfAffected(void* data, void* userData);
