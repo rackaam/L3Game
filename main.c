@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <limits.h>
 #include "circle.h"
 #include "algo.h"
 
@@ -16,6 +17,8 @@ void checkCharsDistribution(int count[]);
 
 /*Global----------*/
 int score = 0;
+char displayedWord[30] = {0};
+unsigned int displayedWordTime = UINT_MAX;
 // extern circle.h
 TTF_Font* font;
 /*----------------*/
@@ -60,7 +63,7 @@ int main(void)
     SDL_Color scoreTextColor = {0, 0, 0};
     SDL_Init( SDL_INIT_VIDEO );
 
-    SDL_Surface* surface = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE |
+    SDL_Surface* surface = SDL_SetVideoMode(640, 520, 32, SDL_HWSURFACE |
                                             SDL_DOUBLEBUF);
     if(surface == NULL)
     {
@@ -98,8 +101,11 @@ int main(void)
     }
 
     SDL_Rect rect0;
+    SDL_Rect rect1;
     rect0.x = 0;
     rect0.y = 0;
+    rect1.x = 0;
+    rect1.y = 480;
     cpFloat timeStep = 1.0 / 8.0;
     int run = 1;
     SDL_Event event;
@@ -173,6 +179,11 @@ int main(void)
         sprintf(buff, "Score : %d", score);
         SDL_Surface* scoreSurface = TTF_RenderText_Blended(font, buff, scoreTextColor);
         SDL_BlitSurface(scoreSurface, NULL, surface, &rect0);
+        if(time(NULL) - displayedWordTime < 5)
+        {
+            SDL_Surface* wordSurface = TTF_RenderText_Blended(font, displayedWord, scoreTextColor);
+            SDL_BlitSurface(wordSurface, NULL, surface, &rect1);
+        }
         if(VIDEO_RECORDING)
         {
             char buf[20];
@@ -235,6 +246,8 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
         wordFound = thirdRule(str, hashtable);
         if(wordFound)
         {
+            strcpy(displayedWord, wordFound);
+            displayedWordTime = time(NULL);
             score += strlen(wordFound);
             printf("Score: %d\n", score);
             printf("Mot : %s\n", wordFound);
