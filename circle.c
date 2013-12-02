@@ -4,9 +4,10 @@ int colors[3];
 int darkLayer;
 SDL_Color fontColor = {255, 255, 255};
 
-void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface, int line)
+void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface, int line
+                , char spawnsTab[], int tabLen)
 {
-    circle->c[0] = rand() % 26 + 97;
+    circle->c[0] = spawnsTab[rand() % tabLen];
     circle->c[1] = '\0';
 
     cpFloat radius = 22;

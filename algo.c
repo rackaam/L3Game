@@ -22,7 +22,6 @@ guint anagramHash(gconstpointer key)
     }
 
     return hash;
-
 }
 
 gboolean anagramEqual(gconstpointer a, gconstpointer b)
