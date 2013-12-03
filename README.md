@@ -7,7 +7,7 @@ Need **libsdl1.2-dev**, **libsdl-gfx1.2-dev**, **libglib2.0-dev** and **libsdl-t
 The given libchipmunk.a is 64 bit.
 
 ##TODO :
-  * rules 1, 2, 3
+  * rules ~~1~~, 2, 3
   * ~~removal of the used letters~~
   * ~~video recording~~
   * valgrind
