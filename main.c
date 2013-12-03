@@ -242,8 +242,8 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
     {
         printf("Selected letters : %s\n", str);
         char* wordFound = NULL;
-        //wordFound = firstRule(str, hashtable);
-        wordFound = secondRule(str, hashtable);
+        wordFound = firstRule(str, hashtable);
+        //wordFound = secondRule(str, hashtable);
         //wordFound = thirdRule(str, hashtable);
         if(wordFound)
         {

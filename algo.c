@@ -58,33 +58,30 @@ gboolean anagramEqual(gconstpointer a, gconstpointer b)
 
 char* firstRule(char* str, GHashTable *hashTable)
 {
-    int  i, debut, fin, size = strlen(str);
+    int  i, debut, strLen = strlen(str);
 
-    for( i = 0; i < size; i++)
+    for( i = 0; i < strLen; i++)
     {
         debut = 0;
-        fin = i;
-
-        for(debut = 0; debut <= i; debut++, fin--)
+        for(debut = 0; debut <= i; debut++)
         {
             char research[20] = {0};
-            strncpy(research, &(str[debut]), size - i);
+            strncpy(research, &(str[debut]), strLen - i);
 
             //Teste si research est le mot recherché
             if ( g_hash_table_contains(hashTable, research))
             {
                 char * buffer;
-                buffer = malloc((size - i) * sizeof(char));
+                buffer = malloc((strLen - i) * sizeof(char));
                 strcpy(buffer, research);
                 return buffer;
             }
         }
     }
-
     return NULL;
 }
 
-int getFirstUpgradableIdx(int tab[], int tabSize, int strLen)
+int getFirstIncrementableIdx(int tab[], int tabSize, int strLen)
 {
     int i, j;
     for(i = tabSize - 1, j = 0; i > -1; i--, j++)
@@ -126,7 +123,7 @@ char* secondRule(char* str, GHashTable *hashTable)
             return buffer;
         }
         */
-        while((idx = getFirstUpgradableIdx(tab, i, strLen)) != -1)
+        while((idx = getFirstIncrementableIdx(tab, i, strLen)) != -1)
         {
             tab[idx]++;
             if(idx < i - 1)
