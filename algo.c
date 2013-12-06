@@ -98,11 +98,31 @@ void substr(char dest[], char src[], int tab[], int tabSize)
 {
     //A IMPLEMENTER
     //Retourne str moins les lettres ayant leur index dans tab.
+
+    //TODO Virer le @ en debut de chaine
+    char recup[10];
+    int srcSize = strlen(src);
+    int i, n=0;
+    if(tab[0]>0)
+        strcat(dest, strncpy(recup,src,tab[0]));
+    if(tabSize>2)
+    {
+        for(i=0;i<tabSize-1;i++)
+        {
+            n=tab[i+1]-tab[i];
+            if(n>1)
+            {
+                strncat(dest, strncpy(recup,&(src[tab[i]+1]),n-1), n-1);
+            }
+        }
+    }
+    if(tab[tabSize-1]<src[srcSize-1])
+        strcat(dest, strncpy(recup,&(src[tab[tabSize-1]+1]),srcSize-tab[tabSize-1]));
 }
 
 char* secondRule(char* str, GHashTable *hashTable)
 {
-//    char buff[30];
+    char buff[30];
     int strLen = strlen(str);
     int i, j, idx;
     for(i = 0; i < strLen; i++)
@@ -113,7 +133,7 @@ char* secondRule(char* str, GHashTable *hashTable)
             tab[j] = j;
         }
 
-        /*
+
         substr(buff, str, tab, i);
         if (g_hash_table_contains(hashTable, buff))
         {
@@ -122,7 +142,7 @@ char* secondRule(char* str, GHashTable *hashTable)
             strcpy(buffer, buff);
             return buffer;
         }
-        */
+
         while((idx = getFirstIncrementableIdx(tab, i, strLen)) != -1)
         {
             tab[idx]++;
@@ -135,7 +155,7 @@ char* secondRule(char* str, GHashTable *hashTable)
                     tab[idx] = tab[idx - a] + a;
                 }
             }
-            /*
+
             substr(buff, str, tab, i);
             if (g_hash_table_contains(hashTable, buff))
             {
@@ -144,7 +164,7 @@ char* secondRule(char* str, GHashTable *hashTable)
                 strcpy(buffer, buff);
                 return buffer;
             }
-            */
+
         }
     }
     return NULL;
