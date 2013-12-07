@@ -261,20 +261,17 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
                 elem = circles;
                 while(elem)
                 {
-                    printf("a\n");
                     circle = (Circle*)elem->data;
                     if(circle->affected && circle->c[0] == c)
                     {
                         liste = g_slist_remove(liste, circle);
                         removeCircleFromSpace(space, circle);
-                        elem = NULL;
+                        break;
                     }
                     else
                     {
                         elem = elem->next;
                     }
-
-                    printf("b\n");
                 }
             }
 
