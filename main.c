@@ -3,9 +3,6 @@
 #include "circle.h"
 #include "algo.h"
 
-#define CIRCLES_NUMBER 40
-#define VIDEO_RECORDING 0
-
 void pause();
 cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
@@ -25,16 +22,38 @@ TTF_Font* font;
 
 int main(int argc, char* argv[])
 {
-    char rule = 0;
+    int i, j, k = 0;
+    char rule = 1;
+    int videoRecording = 0;
+    int ballsNb = 40;
     char* (*ruleFunction)(char*, GHashTable*);
-    if(argc > 1)
+
+    for(i = 1; i < argc; i++)
     {
-        rule = argv[1][0];
+        char *key, *value;
+        key = strtok(argv[i], "=");
+        value = strtok (NULL, " ,.-");
+        if(!strcmp(key, "rule"))
+        {
+            rule = atoi(value);
+        }
+        else if(!strcmp(key, "record"))
+        {
+            videoRecording = atoi(value);
+        }
+        else if(!strcmp(key, "balls"))
+        {
+            ballsNb = atoi(value);
+        }
     }
+
+    printf("video: %d\n", videoRecording);
+    printf("balls: %d\n", ballsNb);
+    printf("rule: %d\n", rule);
+    printf("-----------\n");
 
     int count[26] = {0};
     checkCharsDistribution(count);
-    int i, j, k = 0;
     int spawnTabLen = 0;
     for(i = 0; i < 26; i++)
     {
@@ -49,17 +68,17 @@ int main(int argc, char* argv[])
         }
     }
     GHashTable *hashTable = NULL;
-    if(rule == '1')
+    if(rule == 1)
     {
         hashTable = g_hash_table_new(g_str_hash, g_str_equal);
         ruleFunction = firstRule;
     }
-    else if(rule == '2')
+    else if(rule == 2)
     {
         hashTable = g_hash_table_new(g_str_hash, g_str_equal);
         ruleFunction = secondRule;
     }
-    else if(rule == '3')
+    else if(rule == 3)
     {
         hashTable = g_hash_table_new(anagramHash, anagramEqual);
         ruleFunction = thirdRule;
@@ -119,7 +138,7 @@ int main(int argc, char* argv[])
     cpSpaceAddShape(space, container[2]);
 
     GSList* liste = NULL;
-    for(i = 0; i < CIRCLES_NUMBER; i++)
+    for(i = 0; i < ballsNb; i++)
     {
         Circle* circle = malloc(sizeof(Circle));
         initCircle(circle, space, surface, i % 10, spawnsTab, spawnTabLen);
@@ -209,7 +228,7 @@ int main(int argc, char* argv[])
             SDL_Surface* wordSurface = TTF_RenderText_Blended(font, displayedWord, scoreTextColor);
             SDL_BlitSurface(wordSurface, NULL, surface, &rect1);
         }
-        if(VIDEO_RECORDING)
+        if(videoRecording)
         {
             char buf[20];
             sprintf(buf, "img/frame_%04d.bmp", frameCounter);
@@ -275,7 +294,7 @@ GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
             displayedWordTime = time(NULL);
             score += strlen(wordFound);
             printf("Score: %d\n", score);
-            printf("Mot : %s\n", wordFound);
+            printf("Word : %s\n", wordFound);
             char c;
             int i = 0;
             Circle* circle;
