@@ -11,20 +11,27 @@ cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 void renderScore(SDL_Surface* surface);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space);
+GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*, GHashTable*), GHashTable *hashtable, cpSpace* space);
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
 void checkCharsDistribution(int count[]);
 
 /*Global----------*/
 int score = 0;
-char displayedWord[30] = {0};
+char displayedWord[36] = {0};
 unsigned int displayedWordTime = UINT_MAX;
 // extern circle.h
 TTF_Font* font;
 /*----------------*/
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    char rule = 0;
+    char* (*ruleFunction)(char*, GHashTable*);
+    if(argc > 1)
+    {
+        rule = argv[1][0];
+    }
+
     int count[26] = {0};
     checkCharsDistribution(count);
     int i, j, k = 0;
@@ -41,9 +48,29 @@ int main(void)
             spawnsTab[k++] = i + 'a';
         }
     }
+    GHashTable *hashTable = NULL;
+    if(rule == '1')
+    {
+        hashTable = g_hash_table_new(g_str_hash, g_str_equal);
+        ruleFunction = firstRule;
+    }
+    else if(rule == '2')
+    {
+        hashTable = g_hash_table_new(g_str_hash, g_str_equal);
+        ruleFunction = secondRule;
+    }
+    else if(rule == '3')
+    {
+        hashTable = g_hash_table_new(anagramHash, anagramEqual);
+        ruleFunction = thirdRule;
+    }
+    else
+    {
+        /* Règle 1 par défaut */
+        hashTable = g_hash_table_new(g_str_hash, g_str_equal);
+        ruleFunction = firstRule;
+    }
 
-    GHashTable *hashTable = g_hash_table_new(g_str_hash, g_str_equal);
-    GHashTable *anagramHashTable = g_hash_table_new(anagramHash, anagramEqual);
     char s[30];
     FILE* file = fopen("dico", "r");
     while(fscanf(file, "%s", s) == 1)
@@ -51,7 +78,6 @@ int main(void)
         char* keyTemp = g_strdup(s);
         char* valTemp = g_strdup(s);
         g_hash_table_insert(hashTable, keyTemp, valTemp);
-        g_hash_table_insert(anagramHashTable, keyTemp, valTemp);
     }
     fclose(file);
 
@@ -136,8 +162,7 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                //liste = selection(liste, &mouse1, hashTable, space);
-                liste = selection(liste, &mouse1, anagramHashTable, space);
+                liste = selection(liste, &mouse1, ruleFunction, hashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -231,7 +256,8 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
     return cpFalse; // Aucune collision avec ce segment
 }
 
-GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpace* space)
+GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
+                  GHashTable*), GHashTable *hashtable, cpSpace* space)
 {
     GSList* circles = NULL;
     g_slist_foreach(liste, addIfAffected, &circles);
@@ -242,9 +268,7 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
     {
         printf("Selected letters : %s\n", str);
         char* wordFound = NULL;
-        //wordFound = firstRule(str, hashtable);
-        //wordFound = secondRule(str, hashtable);
-        wordFound = thirdRule(str, hashtable);
+        wordFound = ruleFunction(str, hashtable);
         if(wordFound)
         {
             strcpy(displayedWord, wordFound);
