@@ -179,8 +179,52 @@ char* secondRule(char* str, GHashTable *hashTable)
     return NULL;
 }
 
-char* thirdRule(char* str, GHashTable *hashtable)
+char* thirdRule(char* str, GHashTable *hashTable)
 {
-    return (char*)g_hash_table_lookup(hashtable, str);
+    char buff[30];
+    gpointer value = NULL;
+    int strLen = strlen(str);
+    int i, j, idx;
+    for(i = 0; i < strLen; i++)
+    {
+        int tab[i];
+        for(j = 0; j < i; j++)
+        {
+            tab[j] = j;
+        }
+
+        substr(buff, str, tab, i);
+        if ((value = g_hash_table_lookup(hashTable, buff)))
+        {
+            char* buffer;
+            buffer = malloc(strlen(buff) * sizeof(char));
+            strcpy(buffer, (char*)value);
+            return buffer;
+        }
+
+        while((idx = getFirstIncrementableIdx(tab, i, strLen)) != -1)
+        {
+            tab[idx]++;
+            if(idx < i - 1)
+            {
+                idx++;
+                int a = 1;
+                for(; idx < i; idx++, a++)
+                {
+                    tab[idx] = tab[idx - a] + a;
+                }
+            }
+
+            substr(buff, str, tab, i);
+            if ((value = g_hash_table_lookup(hashTable, buff)))
+            {
+                char* buffer;
+                buffer = malloc(strlen(buff) * sizeof(char));
+                strcpy(buffer, (char*)value);
+                return buffer;
+            }
+        }
+    }
+    return NULL;
 }
 

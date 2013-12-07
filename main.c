@@ -136,8 +136,8 @@ int main(void)
                 break;
             case SDL_MOUSEBUTTONUP:
                 drawLine = 0;
-                liste = selection(liste, &mouse1, hashTable, space);
-                //liste = selection(liste, &mouse1, anagramHashTable, space);
+                //liste = selection(liste, &mouse1, hashTable, space);
+                liste = selection(liste, &mouse1, anagramHashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -236,15 +236,15 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
     GSList* circles = NULL;
     g_slist_foreach(liste, addIfAffected, &circles);
     circles = g_slist_sort_with_data(circles, sortFunction, startPos);
-    char str[20] = "";
+    char str[30] = "";
     g_slist_foreach(circles, addChar, str);
     if(strlen(str))
     {
         printf("Selected letters : %s\n", str);
         char* wordFound = NULL;
         //wordFound = firstRule(str, hashtable);
-        wordFound = secondRule(str, hashtable);
-        //wordFound = thirdRule(str, hashtable);
+        //wordFound = secondRule(str, hashtable);
+        wordFound = thirdRule(str, hashtable);
         if(wordFound)
         {
             strcpy(displayedWord, wordFound);
@@ -261,6 +261,7 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
                 elem = circles;
                 while(elem)
                 {
+                    printf("a\n");
                     circle = (Circle*)elem->data;
                     if(circle->affected && circle->c[0] == c)
                     {
@@ -272,6 +273,8 @@ GSList* selection(GSList* liste, cpVect* startPos, GHashTable *hashtable, cpSpac
                     {
                         elem = elem->next;
                     }
+
+                    printf("b\n");
                 }
             }
 
