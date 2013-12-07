@@ -96,28 +96,39 @@ int getFirstIncrementableIdx(int tab[], int tabSize, int strLen)
 
 void substr(char dest[], char src[], int tab[], int tabSize)
 {
-    //A IMPLEMENTER
-    //Retourne str moins les lettres ayant leur index dans tab.
-
-    //TODO Virer le @ en debut de chaine
-    char recup[10];
     int srcSize = strlen(src);
-    int i, n=0;
-    if(tab[0]>0)
-        strcat(dest, strncpy(recup,src,tab[0]));
-    if(tabSize>2)
+    if(tabSize == 0)
     {
-        for(i=0;i<tabSize-1;i++)
+        strcpy(dest, src);
+    }
+    else
+    {
+        int destIdx = 0; // Utilisé pour savoir ou écrire dans dest
+
+        /* copie du début de src jusqu'au premier caractère a enlever */
+        strncpy(dest, src, tab[0]);
+        destIdx += tab[0];
+
+        /* copie des caractères présent entre 2 caractères à enlever */
+        int i, diff;
+        for(i = 0; i < (tabSize - 1); i++)
         {
-            n=tab[i+1]-tab[i];
-            if(n>1)
+            diff = tab[i + 1] - tab[i];
+            if(diff > 1)
             {
-                strncat(dest, strncpy(recup,&(src[tab[i]+1]),n-1), n-1);
+                strncpy(&(dest[destIdx]), &(src[tab[i] + 1]), diff - 1);
+                destIdx += (diff - 1);
             }
         }
+
+        /* copie du dernier caractère à enlever jusqu'a la fin de src */
+        diff = srcSize - 1 - tab[tabSize - 1];
+        strncpy(&(dest[destIdx]), &(src[tab[tabSize - 1] + 1]), diff);
+        destIdx += diff;
+
+        /* rajout d'un caractère de fin de chaine à la fin du mot car strncpy n'en rajoute pas */
+        strncpy(&(dest[destIdx]), "\0", 1);
     }
-    if(tab[tabSize-1]<src[srcSize-1])
-        strcat(dest, strncpy(recup,&(src[tab[tabSize-1]+1]),srcSize-tab[tabSize-1]));
 }
 
 char* secondRule(char* str, GHashTable *hashTable)
@@ -132,7 +143,6 @@ char* secondRule(char* str, GHashTable *hashTable)
         {
             tab[j] = j;
         }
-
 
         substr(buff, str, tab, i);
         if (g_hash_table_contains(hashTable, buff))
@@ -164,7 +174,6 @@ char* secondRule(char* str, GHashTable *hashTable)
                 strcpy(buffer, buff);
                 return buffer;
             }
-
         }
     }
     return NULL;
