@@ -8,7 +8,7 @@ cpSpace* getSpace(void);
 void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape);
 void renderScore(SDL_Surface* surface);
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data);
-GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*, GHashTable*), GHashTable *hashtable, cpSpace* space);
+GSList* checkSelection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*, GHashTable*), GHashTable *hashtable, cpSpace* space);
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos);
 void checkCharsDistribution(int count[], char* fileName);
 
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
                 break;
             case SDL_MOUSEBUTTONUP:
                 mouseSeg = 0;
-                liste = selection(liste, &mouse1, ruleFunction, hashTable, space);
+                liste = checkSelection(liste, &mouse1, ruleFunction, hashTable, space);
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
@@ -271,27 +271,6 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-/* Retourne un cpSpace configuré pour le jeu */
-cpSpace* getSpace(void)
-{
-    cpSpace *space = cpSpaceNew();
-    cpVect gravity = cpv(0, 10);
-    cpSpaceSetGravity(space, gravity);
-    return space;
-}
-
-/* Affiche les nbShape segments du récipient */
-void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape)
-{
-    int i;
-    for(i = 0; i < nbShape; i++)
-    {
-        cpVect a = cpSegmentShapeGetA(container[i]);
-        cpVect b = cpSegmentShapeGetB(container[i]);
-        thickLineColor(surface, a.x, a.y, b.x, b.y, 2, 0x000099FF);
-    }
-}
-
 /* Fonction de collision entre le segment et une boule */
 cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
 {
@@ -302,7 +281,7 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
 }
 
 /* Recherche un mot dans le dictionnaire et suprime les boules utilisées */
-GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
+GSList* checkSelection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
                   GHashTable*), GHashTable *hashtable, cpSpace* space)
 {
     GSList* balls = NULL;
@@ -349,6 +328,27 @@ GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
         }
     }
     return liste;
+}
+
+/* Retourne un cpSpace configuré pour le jeu */
+cpSpace* getSpace(void)
+{
+    cpSpace *space = cpSpaceNew();
+    cpVect gravity = cpv(0, 10);
+    cpSpaceSetGravity(space, gravity);
+    return space;
+}
+
+/* Affiche les nbShape segments du récipient */
+void renderContainer(SDL_Surface* surface, cpShape** container, int nbShape)
+{
+    int i;
+    for(i = 0; i < nbShape; i++)
+    {
+        cpVect a = cpSegmentShapeGetA(container[i]);
+        cpVect b = cpSegmentShapeGetB(container[i]);
+        thickLineColor(surface, a.x, a.y, b.x, b.y, 2, 0x000099FF);
+    }
 }
 
 /* Fonction de tri. Place la boule la plus proche du début du segment en première position */
