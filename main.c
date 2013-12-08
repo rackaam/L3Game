@@ -353,20 +353,3 @@ void checkCharsDistribution(int count[])
         count[i] /= total;
     }
 }
-
-void pause()
-{
-    int run = 1;
-    SDL_Event event;
-
-    while (run)
-    {
-        SDL_WaitEvent(&event);
-        switch(event.type)
-        {
-        case SDL_QUIT:
-            run = 0;
-        }
-    }
-}
-
