@@ -46,6 +46,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="algo.h" />
+		<Unit filename="ball.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="ball.h" />
 		<Unit filename="chipmunk/chipmunk.h" />
 		<Unit filename="chipmunk/chipmunk_ffi.h" />
 		<Unit filename="chipmunk/chipmunk_private.h" />
@@ -71,10 +75,6 @@
 		<Unit filename="chipmunk/cpSpace.h" />
 		<Unit filename="chipmunk/cpSpatialIndex.h" />
 		<Unit filename="chipmunk/cpVect.h" />
-		<Unit filename="circle.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="circle.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
