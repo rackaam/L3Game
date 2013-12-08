@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <limits.h>
-#include "circle.h"
+#include "ball.h"
 #include "algo.h"
 
 void pause();
@@ -16,7 +16,7 @@ void checkCharsDistribution(int count[], char* fileName);
 int score = 0;
 char displayedWord[36] = {0};
 unsigned int displayedWordTime = UINT_MAX;
-// extern circle.h
+// extern ball.h
 TTF_Font* font;
 /*----------------*/
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 
     /* Initialisation de la partie graphique */
     TTF_Init();
-    circleInit();
+    ballInit();
     cpVect mouse1 = cpv(-1, -1);
     cpVect mouse2 = cpv(-1, -1);
     int mouseSeg = 0;
@@ -147,9 +147,9 @@ int main(int argc, char* argv[])
     GSList* liste = NULL;
     for(i = 0; i < ballsNb; i++)
     {
-        Circle* circle = malloc(sizeof(Circle));
-        initCircle(circle, space, surface, i % 10, spawnsTab, spawnTabLen);
-        liste = g_slist_append(liste, circle );
+        Ball* ball = malloc(sizeof(Ball));
+        initBall(ball, space, surface, i % 10, spawnsTab, spawnTabLen);
+        liste = g_slist_append(liste, ball );
     }
 
     SDL_Rect rect0;
@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
         renderContainer(surface, container, 3);
 
         // Dessin de chaque cercle
-        g_slist_foreach(liste, renderCircle, surface);
+        g_slist_foreach(liste, renderBall, surface);
 
         // Dessin du segment
         if(mouseSeg)
@@ -262,10 +262,10 @@ int main(int argc, char* argv[])
         SDL_Delay(1000.0 / 60.0);
     }
 
-    g_slist_free_full(liste, freeCircle);
+    g_slist_free_full(liste, freeBall);
     cpSpaceFree(space);
 
-    circleQuit();
+    ballQuit();
     TTF_Quit();
     SDL_Quit();
     return 0;
@@ -305,11 +305,11 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
 GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
                   GHashTable*), GHashTable *hashtable, cpSpace* space)
 {
-    GSList* circles = NULL;
-    g_slist_foreach(liste, addIfAffected, &circles);
-    circles = g_slist_sort_with_data(circles, sortFunction, startPos);
+    GSList* balls = NULL;
+    g_slist_foreach(liste, addIfAffected, &balls);
+    balls = g_slist_sort_with_data(balls, sortFunction, startPos);
     char str[30] = "";
-    g_slist_foreach(circles, addChar, str);
+    g_slist_foreach(balls, addChar, str);
     if(strlen(str))
     {
         printf("Selected letters : %s\n", str);
@@ -324,18 +324,18 @@ GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
             printf("Word : %s\n", wordFound);
             char c;
             int i = 0;
-            Circle* circle;
+            Ball* ball;
             GSList* elem;
             while((c = wordFound[i++]) != '\0')
             {
-                elem = circles;
+                elem = balls;
                 while(elem)
                 {
-                    circle = (Circle*)elem->data;
-                    if(circle->affected && circle->c[0] == c)
+                    ball = (Ball*)elem->data;
+                    if(ball->affected && ball->c[0] == c)
                     {
-                        liste = g_slist_remove(liste, circle);
-                        removeCircleFromSpace(space, circle);
+                        liste = g_slist_remove(liste, ball);
+                        removeBallFromSpace(space, ball);
                         break;
                     }
                     else
@@ -355,8 +355,8 @@ GSList* selection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
 gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos)
 {
     cpVect* start = (cpVect*) startPos;
-    cpVect vA = cpBodyGetPos(((Circle*)a)->body);
-    cpVect vB = cpBodyGetPos(((Circle*)b)->body);
+    cpVect vA = cpBodyGetPos(((Ball*)a)->body);
+    cpVect vB = cpBodyGetPos(((Ball*)b)->body);
     return (int)(cpvdistsq(*start, vA) - cpvdistsq(*start, vB));
 }
 

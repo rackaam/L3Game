@@ -1,5 +1,4 @@
 #include "algo.h"
-#include <glib.h>
 
 
 int ascending(void const *a, void const *b )

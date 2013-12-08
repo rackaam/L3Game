@@ -1,5 +1,5 @@
-#ifndef CIRCLE_H_INCLUDED
-#define CIRCLE_H_INCLUDED
+#ifndef Ball_H_INCLUDED
+#define Ball_H_INCLUDED
 
 #define TO_DEGREES 57.295779513
 
@@ -12,8 +12,8 @@
 
 extern TTF_Font* font;
 
-typedef struct Circle Circle;
-struct Circle
+typedef struct Ball Ball;
+struct Ball
 {
     char c[2];
     int color;
@@ -23,16 +23,16 @@ struct Circle
     SDL_Surface* surface;
 };
 
-void circleInit();
-void circleQuit();
-void initCircle(Circle* circle, cpSpace* space, SDL_Surface* surface, int line
-                , char spawnsTab[], int tabLen);
-void freeCircle(void* circle);
-void renderCircle(void* circle, void* surface);
+void ballInit();
+void ballQuit();
+void initBall(Ball* ball, cpSpace* space, SDL_Surface* surface, int line
+              , char spawnsTab[], int tabLen);
+void freeBall(void* ball);
+void renderBall(void* ball, void* surface);
 void checkIfAffected(void* data, void* userData);
 void resetAffected(void* data, void* userData);
 void addIfAffected(void* data, void* userData);
 void addChar(void* data, void* userData);
-void removeCircleFromSpace(cpSpace* space, Circle* circle);
+void removeBallFromSpace(cpSpace* space, Ball* ball);
 
-#endif // CIRCLE_H_INCLUDED
+#endif // Ball_H_INCLUDED
