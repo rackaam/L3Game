@@ -132,11 +132,11 @@ int main(int argc, char* argv[])
     cpShapeSetFriction(container[0], 0.5);
     cpShapeSetElasticity(container[0], 0.5);
     container[1] = cpSegmentShapeNew(space->staticBody, cpv(70, 450),
-                                     cpv(530, 450), 0);
+                                     cpv(570, 450), 0);
     cpShapeSetFriction(container[1], 0.5);
     cpShapeSetElasticity(container[1], 0.5);
-    container[2] = cpSegmentShapeNew(space->staticBody, cpv(530, 450),
-                                     cpv(580, 40), 0);
+    container[2] = cpSegmentShapeNew(space->staticBody, cpv(570, 450),
+                                     cpv(620, 40), 0);
     cpShapeSetFriction(container[2], 0.5);
     cpShapeSetElasticity(container[2], 0.5);
     cpSpaceAddShape(space, container[0]);
@@ -282,7 +282,7 @@ cpBool preSolve(cpArbiter *arb, cpSpace *space, void *data)
 
 /* Recherche un mot dans le dictionnaire et suprime les boules utilisées */
 GSList* checkSelection(GSList* liste, cpVect* startPos, char * (*ruleFunction)(char*,
-                  GHashTable*), GHashTable *hashtable, cpSpace* space)
+                       GHashTable*), GHashTable *hashtable, cpSpace* space)
 {
     GSList* balls = NULL;
     g_slist_foreach(liste, addIfAffected, &balls);
