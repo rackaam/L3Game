@@ -108,6 +108,11 @@ void removeBallFromSpace(cpSpace* space, Ball* ball)
 void ballInit()
 {
     font = TTF_OpenFont("UbuntuMono-R.ttf", 32);
+    if(font == NULL)
+    {
+        fprintf (stderr, "Erreur : Fichier de police introuvable (fichier \"UbuntuMono-R.ttf\")\n");
+        exit(-3);
+    }
     SDL_Surface* s = SDL_CreateRGBSurface(SDL_HWSURFACE, 1, 1, 32, 0xFF000000,
                                           0x00FF0000, 0x0000FF00, 0x000000FF);
     colors[0] = SDL_MapRGB(s->format, 255, 0, 0);

@@ -96,6 +96,11 @@ int main(int argc, char* argv[])
 
     char s[30];
     FILE* file = fopen("dico", "r");
+    if(file == NULL)
+    {
+        fprintf (stderr, "Erreur : Dictionnaire (fichier \"dico\") introuvable\n");
+        exit(-2);
+    }
     while(fscanf(file, "%s", s) == 1)
     {
         char* keyTemp = g_strdup(s);
@@ -364,6 +369,11 @@ gint sortFunction(gconstpointer a, gconstpointer b, gpointer startPos)
 void checkCharsDistribution(int count[], char* fileName)
 {
     FILE* file = fopen(fileName, "r");
+    if(file == NULL)
+    {
+        fprintf (stderr, "Erreur : Dictionnaire (fichier \"dico\") introuvable\n");
+        exit(-2);
+    }
     char c;
     unsigned int total = 0;
     while((c = fgetc(file)) != EOF)
